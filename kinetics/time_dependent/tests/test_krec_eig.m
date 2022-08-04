@@ -21,7 +21,7 @@ function test_krec_eig()
   states = states(states{:, 'energy'} > -3000 * j_per_cm_1, :);
   states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
 %   states = states(states{:, 'gamma_total'} < 1 * j_per_cm_1, :);
-  states = assign_extra_properties(o3_molecule, states, optional);
+  states = assign_extra_properties(o3_molecule, states);
 
   krec_m6_per_s = find_krec_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, optional);
 end

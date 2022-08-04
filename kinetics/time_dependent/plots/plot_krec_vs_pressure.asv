@@ -15,8 +15,14 @@ function plot_krec_vs_pressure()
   optional = map_create();
   optional('k_dependent_threshold') = 0;
 
-  krecs_m6_per_s = zeros(size(M_per_m3));
-  tic
+  key = get_key(o3_molecule, Js, Ks, syms);
+  states = resonances(key);
+  states = states(states{:, 'energy'} > -3000 * j_per_cm_1, :);
+  states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
+%   states = states(states{:, 'gamma_total'} < 1 * j_per_cm_1, :);
+  states = assign_extra_properties(o3_molecule, states);
+
+  krec_m6_per_s = zeros(size(M_per_m3));
   for J_ind = 1:length(Js)
     J = Js(J_ind);
     for K_ind = 1:length(Ks)
@@ -27,20 +33,14 @@ function plot_krec_vs_pressure()
 
       for sym_ind = 1:length(syms)
         sym = syms(sym_ind);
-
-        key = get_key(o3_molecule, J, K, sym);
-        states = resonances(key);
-%         states = states(states{:, 'energy'} > -3000 * j_per_cm_1, :);
-        states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
-        states = assign_extra_properties(o3_molecule, states);
-
-        krecs_m6_per_s = krecs_m6_per_s + ...
+        krecs_m6_per_s = ...
           arrayfun(@(M) find_krec_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M, optional), M_per_m3);
       end
     end
   end
-  toc
 
+  
+  
   experimental = get_krec_vs_pressure_experimental_666();
   krec_exp_m6_per_s = experimental(:, 2) * 1e-12;
   pressure = m_conc_to_bar(M_per_m3, temp_k);
@@ -50,4 +50,5 @@ function plot_krec_vs_pressure()
   plot(experimental(:, 1), krec_exp_m6_per_s, 'k.', 'MarkerSize', 20);
   xlabel('Pressure, bar');
   ylabel('krec, m^6/s');
+
 end
