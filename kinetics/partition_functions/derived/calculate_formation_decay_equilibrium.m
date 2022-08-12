@@ -1,5 +1,5 @@
-function Kfds_m3 = calculate_formation_decay_equilibrium(states, temp_k, part_funcs_o2_m_3, ...
-  threshold_energies_j, optional)
+function Kfds_m3 = calculate_formation_decay_equilibrium(states, temp_k, part_funcs_o2_m_3, threshold_energies_j, ...
+  optional)
 % Calculates formation/decay equilibrium constants for all channels
 % 1st column - channel 1, 2nd - channel 2 (not used for 666)
   j_per_k = getvar('j_per_k');

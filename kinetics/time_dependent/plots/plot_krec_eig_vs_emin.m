@@ -15,11 +15,13 @@ function plot_krec_eig_vs_emin()
   sigma0_m2 = 250 * m_per_a0^2;
   optional = map_create();
   optional('k_dependent_threshold') = 0;
+  optional("check_eigenvectors") = true;
   emins = -1000:-1000:-9000;
+  emax = 300;
 
   key = get_key(o3_molecule, Js, Ks, syms);
   states = resonances(key);
-  states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
+  states = states(states{:, 'energy'} < emax * j_per_cm_1, :);
   states = assign_extra_properties(o3_molecule, states);
   krecs_m6_per_s = zeros(size(emins));
   for i = 1:length(emins)
@@ -27,5 +29,6 @@ function plot_krec_eig_vs_emin()
     krecs_m6_per_s(i) = find_krec_eig(o3_molecule, temp_k, sigma0_m2, next_states, dE_j, M_per_m3, optional);
   end
   
-  my_plot(emins, krecs_m6_per_s, "E_{min}, cm^{-1}", "k_{rec}, m^6/s", xdir = "reverse", yscale = "log");
+  my_plot(emins, krecs_m6_per_s, "E_{min}, cm^{-1}", "k_{rec}, m^6/s", xdir="reverse", yscale="log", color="b", ...
+    new_plot=true);
 end

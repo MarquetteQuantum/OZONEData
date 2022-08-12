@@ -9,11 +9,11 @@ function test_2nd_level()
   Ks = 2;
   syms = 0;
   temp_k = 298;
-  M_per_m3 = 6.44e28;
+  M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 250 * m_per_a0^2;
-  time_s = linspace(0, 0.001e-9, 101);
+  time_s = linspace(0, 100e-9, 101);
   optional = map_create();
   optional('k_dependent_threshold') = 0;
 
@@ -59,6 +59,7 @@ function test_2nd_level()
 
   krec_approx_m6_per_s = dO3dt_total_per_m3_s ./ O3_total_displacement_per_m3 * Keq_total_m3 / M_per_m3;
   krec_m6_per_s = dO3dt_total_per_m3_s ./ (O_per_m3 .* O2_per_m3 - O3_total_per_m3 / Keq_total_m3) / M_per_m3;
+  error = (krec_approx_m6_per_s ./ krec_m6_per_s - 1) * 100;
 
   krec_approx_m6_per_s(end)
   krec_m6_per_s(end)
@@ -80,4 +81,5 @@ function test_2nd_level()
 
 %   plot_derivatives_vs_time(figure_ids(3), style1, x_lims, time_s, dO3dt_total_per_m3_s);
   plot_krec_vs_time(figure_ids(4), style, x_lims, time_s, krec_m6_per_s);
+  my_plot
 end

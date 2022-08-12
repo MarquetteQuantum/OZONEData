@@ -9,7 +9,7 @@ function test_krec_eig()
   Ks = 2;
   syms = 0;
   temp_k = 298;
-  M_per_m3 = 6.44e25;
+  M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_m2 = 250 * m_per_a0^2;

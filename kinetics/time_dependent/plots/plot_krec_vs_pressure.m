@@ -37,7 +37,8 @@ function plot_krec_vs_pressure()
           states = resonances(key);
           states = states(states{:, 'energy'} > -3000 * j_per_cm_1, :);
           states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
-          states = states(states{:, 'gamma_total'} < 1e-10 * k0_m3_per_s * M_per_m3 * j_per_cm_1, :);
+%           states = states(states{:, 'gamma_total'} < 1e-10 * k0_m3_per_s * M_per_m3 * j_per_cm_1, :);
+%           states{states{:, 'gamma_total'} < 1e-10 * j_per_cm_1, 'gamma_total'} = 0;
 %           states = states(states{:, 'gamma_total'} < 0.1 * j_per_cm_1, :);
           states = assign_extra_properties(o3_molecule, states);
           

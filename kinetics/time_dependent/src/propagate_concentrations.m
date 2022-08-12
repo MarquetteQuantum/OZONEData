@@ -14,8 +14,13 @@ function [concentrations, ode_func, flux_func, equilibrium_constants_m3] = propa
       o3_molecule, states, temp_k, optional);
     decay_rates_per_s = get_decay_coeffs(o3_molecule, states, threshold_energies_j);
     transition_matrix_mod_m3_per_s = (transition_matrix_m3_per_s - diag(sum(transition_matrix_m3_per_s, 2)))';
-    ode_func = @(t, y) do3dt_level_2_lighter(transition_matrix_mod_m3_per_s, decay_rates_per_s, ...
-      equilibrium_constants_m3, m_conc_per_m3, y);
+    if o3_molecule == "666"
+      ode_func = @(t, y) do3dt_level_2_lighter(transition_matrix_mod_m3_per_s, decay_rates_per_s, ...
+        equilibrium_constants_m3, m_conc_per_m3, y);
+    else
+      ode_func = @(t, y) do3dt_686(transition_matrix_mod_m3_per_s, decay_rates_per_s(:, 1), decay_rates_per_s(:, 2), ...
+        equilibrium_constants_m3(:, 1), equilibrium_constants_m3(:, 2), m_conc_per_m3, y);
+    end
   end
 
   options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15);
