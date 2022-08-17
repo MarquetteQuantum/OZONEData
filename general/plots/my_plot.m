@@ -9,9 +9,10 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
     optional.color = "b"
     optional.marker (1, 1) string = "."
     optional.line_width (1, 1) double = 2
+    optional.line_style (1, 1) string = "-"
     optional.marker_size (1, 1) double = 20
-    optional.xlim = "auto"
-    optional.ylim = "auto"
+    optional.xlim = nan
+    optional.ylim = nan
     optional.xdir (1, 1) string = "normal"
     optional.ydir (1, 1) string = "normal"
     optional.xscale (1, 1) string = "linear"
@@ -23,7 +24,7 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
   end
 
   figure = plot(xs, ys, 'Color', optional.color, 'Marker', optional.marker, 'LineWidth', optional.line_width, ...
-    'MarkerSize', optional.marker_size);
+    'LineStyle', optional.line_style, 'MarkerSize', optional.marker_size);
 
   if x_label ~= ""
     xlabel(x_label);
@@ -31,8 +32,12 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
   if y_label ~= ""
     ylabel(y_label);
   end
-  xlim(optional.xlim);
-  ylim(optional.ylim);
+  if ~all(isnan(optional.xlim))
+    xlim(optional.xlim);
+  end
+  if ~all(isnan(optional.ylim))
+    ylim(optional.ylim);
+  end
   set(gca, "xdir", optional.xdir);
   set(gca, "ydir", optional.ydir);
   set(gca, "xscale", optional.xscale);
