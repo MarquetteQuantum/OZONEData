@@ -3,7 +3,7 @@ function [concentrations, ode_func, flux_func, equilibrium_constants_m3] = propa
 % Propagates states' concentrations on a given time grid
 % Level specifies level of theory
 
-  transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j);
+  transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j, optional);
   first_unbound_ind = find(states{:, 'energy'} > 0, 1);
   flux_func = @(y) do3dt_flux(transition_matrix_m3_per_s, m_conc_per_m3, first_unbound_ind, y);
 
