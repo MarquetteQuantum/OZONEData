@@ -1,12 +1,8 @@
-function matrix = calculate_transition_matrix_unitless(states, dE_j, optional)
+function matrix = calculate_transition_matrix_unitless(states, dE_j, transition_model)
 % Calculates unitless state-to-state transition matrix (matrix(i, j) = kappa i->j)
 % dE = [down, up]
-  if nargin < nargin(@calculate_transition_matrix_unitless)
-    optional = nan;
-  end
-  transition_model = get_or_default(optional, 'transition_model', ...
-    {{'sym'}, {'asym'}, {'vdw_a_sym', 'vdw_a_asym'}, {'vdw_b'}});
-
+% Transition model is a cell array of cell arrays. Each internal array specifies a group of columns that can transit to
+% one another. E.g. {{'sym'}, {'asym'}, {'vdw_a_sym', 'vdw_a_asym'}, {'vdw_b'}}
   matrix = zeros(size(states, 1));
   energies_j = states{:, 'energy'};
   probs = select_region_probabilities(states, transition_model);
