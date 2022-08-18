@@ -13,10 +13,10 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
     optional.marker_size (1, 1) double = 20
     optional.xlim = nan
     optional.ylim = nan
-    optional.xdir (1, 1) string = "normal"
-    optional.ydir (1, 1) string = "normal"
-    optional.xscale (1, 1) string = "linear"
-    optional.yscale (1, 1) string = "linear"
+    optional.xdir = nan
+    optional.ydir = nan
+    optional.xscale = nan
+    optional.yscale = nan
   end
 
   if optional.new_plot
@@ -38,8 +38,16 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
   if ~all(isnan(optional.ylim))
     ylim(optional.ylim);
   end
-  set(gca, "xdir", optional.xdir);
-  set(gca, "ydir", optional.ydir);
-  set(gca, "xscale", optional.xscale);
-  set(gca, "yscale", optional.yscale);
+  if ~isnan(optional.xdir)
+    set(gca, "xdir", optional.xdir);
+  end
+  if ~isnan(optional.ydir)
+    set(gca, "ydir", optional.ydir);
+  end
+  if ~isnan(optional.xscale)
+    set(gca, "xscale", optional.xscale);
+  end
+  if ~isnan(optional.yscale)
+    set(gca, "yscale", optional.yscale);
+  end
 end
