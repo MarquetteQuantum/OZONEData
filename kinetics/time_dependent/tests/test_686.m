@@ -12,8 +12,10 @@ function test_686()
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  time_s = linspace(0, 20e-9, 101);
+  time_s = linspace(0, 20e-9, 51);
+%   transition_model_sym = {{'sym', 'asym'}};
   transition_model_sym = {{'sym'}, {'asym'}};
+%   transition_model_sym = {{'sym'}};
   transition_model_asym = {{'asym'}};
   sym_name = "sym";
   asym_name = "asym";
