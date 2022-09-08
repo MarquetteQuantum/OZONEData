@@ -3,7 +3,7 @@ function test_propagation()
   j_per_cm_1 = getvar('j_per_cm_1');
   m_per_a0 = getvar('m_per_a0');
   
-  o3_molecule = '686';
+  o3_molecule = '666';
   Js = 24;
   Ks = 2;
   syms = 0;
@@ -43,7 +43,8 @@ function test_propagation()
     temp_k, M_per_m3, dE_j, transition_models, region_names, optional);
   toc
 
-  Keq_m3 = sum(equilibrium_constants_m3(:, 2, 1));
+  ch = get_lower_channel_ind(o3_molecule);
+  Keq_m3 = sum(equilibrium_constants_m3(:, ch, 1));
   O3_per_m3 = sum(concentrations_per_m3(:, 1 : end - num_reactants, 1), 2);
   dO3dt_per_m3_s = sum(derivatives_per_m3_s(:, 1 : end - num_reactants, 1), 2);
   reactants_per_m3 = concentrations_per_m3(:, end - 1 : end, 1);

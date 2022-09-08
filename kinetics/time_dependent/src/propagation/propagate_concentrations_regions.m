@@ -8,7 +8,7 @@ function [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3]
 % transition_model should include 2 elements for separate_propagation is true, otherwise 1
 % region_names specifies names of the columns in states table to be used as sym/asym separation multipliers
 
-  if nargin < nargin(@propagate_concentrations_sym_asym)
+  if nargin < nargin(@propagate_concentrations_regions)
     optional = nan;
   end
   separate_propagation = get_or_default(optional, 'separate_propagation', false);
