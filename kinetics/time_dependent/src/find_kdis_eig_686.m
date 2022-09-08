@@ -1,9 +1,13 @@
-function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, optional)
+function kdis_per_s = find_kdis_eig_686(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, ...
+  optional)
 % Finds kdis via solution of an eigenproblem
   check_eigenvectors = get_or_default(optional, "check_eigenvectors", true);
   max_eigenvectors = get_or_default(optional, "max_eigenvectors", 1);
 
-  decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, optional);
+  decay_coeffs_per_s = sum(get_decay_coeffs_2(o3_molecule, states, optional), 2);
+%   decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, optional);
+%   decay_coeffs_per_s = decay_coeffs_per_s(:, 2);
+
   transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j, ...
     transition_model);
   kdis_matrix_per_s = -M_per_m3 * transition_matrix_m3_per_s';
