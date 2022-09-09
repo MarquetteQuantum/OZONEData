@@ -35,11 +35,6 @@ function test_propagation()
     % channel 2 is in equilibrium with channel 1
     initial_concentrations_per_m3(size(states, 1) + 3) = initial_concentrations_per_m3(size(states, 1) + 1) / sqrt(Kex);
     initial_concentrations_per_m3(size(states, 1) + 4) = initial_concentrations_per_m3(size(states, 1) + 2) / sqrt(Kex);
-
-    initial_concentrations_per_m3(size(states, 1) + 1) = 6.44e18 * sqrt(0.462088412526345); % ch1, reactant 1
-    initial_concentrations_per_m3(size(states, 1) + 2) = 6.44e20 * sqrt(0.462088412526345); % ch1, reactant 2
-    initial_concentrations_per_m3(size(states, 1) + 3) = 6.44e18; % ch1, reactant 1
-    initial_concentrations_per_m3(size(states, 1) + 4) = 6.44e20; % ch1, reactant 2
   end
 
   tic
