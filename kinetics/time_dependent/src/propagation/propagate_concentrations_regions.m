@@ -22,7 +22,7 @@ function [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3]
   if ~separate_propagation
     [concentrations_total_per_m3, derivatives_total_per_m3_s] = propagate_concentrations(o3_molecule, states, ...
       initial_concentrations_per_m3, equilibrium_constants_total_m3, time_s, sigma0_m2, temp_k, M_conc_per_m3, ...
-      dE_j, transition_models(1), optional);
+      dE_j, transition_models{1}, optional);
 
     last_o3_ind = size(states, 1);
     concentrations_per_m3 = repmat(concentrations_total_per_m3, [1, 1, length(region_names)]);
@@ -36,10 +36,10 @@ function [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3]
   else
     [concentrations_sym_per_m3, derivatives_sym_per_m3_s] = propagate_concentrations(o3_molecule, states, ...
       initial_concentrations_per_m3, equilibrium_constants_m3(:, :, 1), time_s, sigma0_m2, temp_k, M_conc_per_m3, ...
-      dE_j, transition_models(1), optional);
+      dE_j, transition_models{1}, optional);
     [concentrations_asym_per_m3, derivatives_asym_per_m3_s] = propagate_concentrations(o3_molecule, states, ...
       initial_concentrations_per_m3, equilibrium_constants_m3(:, :, 2), time_s, sigma0_m2, temp_k, M_conc_per_m3, ...
-      dE_j, transition_models(2), optional);
+      dE_j, transition_models{2}, optional);
     concentrations_per_m3 = cat(3, concentrations_sym_per_m3, concentrations_asym_per_m3);
     derivatives_per_m3_s = cat(3, derivatives_sym_per_m3_s, derivatives_asym_per_m3_s);
   end

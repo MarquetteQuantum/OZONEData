@@ -3,7 +3,7 @@ function test_propagation()
   j_per_cm_1 = getvar('j_per_cm_1');
   m_per_a0 = getvar('m_per_a0');
   
-  o3_molecule = '666';
+  o3_molecule = '686';
   Js = 24;
   Ks = 2;
   syms = 0;
@@ -12,9 +12,9 @@ function test_propagation()
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  time_s = linspace(0, 50e-9, 51);
-  transition_models = [{{'cov'}}];
-  region_names = ["cov"];
+  time_s = linspace(0, 20e-9, 51);
+  transition_models = {{["sym"], ["asym"]}};
+  region_names = "cov";
   optional = map_create();
   optional('k_dependent_threshold') = 0;
   optional('separate_propagation') = false;
@@ -35,6 +35,11 @@ function test_propagation()
     % channel 2 is in equilibrium with channel 1
     initial_concentrations_per_m3(size(states, 1) + 3) = initial_concentrations_per_m3(size(states, 1) + 1) / sqrt(Kex);
     initial_concentrations_per_m3(size(states, 1) + 4) = initial_concentrations_per_m3(size(states, 1) + 2) / sqrt(Kex);
+
+    initial_concentrations_per_m3(size(states, 1) + 1) = 6.44e18 * sqrt(0.462088412526345); % ch1, reactant 1
+    initial_concentrations_per_m3(size(states, 1) + 2) = 6.44e20 * sqrt(0.462088412526345); % ch1, reactant 2
+    initial_concentrations_per_m3(size(states, 1) + 3) = 6.44e18; % ch1, reactant 1
+    initial_concentrations_per_m3(size(states, 1) + 4) = 6.44e20; % ch1, reactant 2
   end
 
   tic
