@@ -12,8 +12,9 @@ function test_propagation()
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  time_s = linspace(0, 20e-9, 51);
-  transition_models = {{["sym"], ["asym"]}};
+  time_s = linspace(0, 10e-9, 51);
+  transition_models = {{["cov"]}};
+%   transition_models = {{["sym"], ["asym"]}};
   region_names = "cov";
   optional = map_create();
   optional('k_dependent_threshold') = 0;
@@ -21,8 +22,9 @@ function test_propagation()
 
   key = get_key(o3_molecule, Js, Ks, syms);
   states = resonances(key);
-  states = states(states{:, 'energy'} > -3000 * j_per_cm_1, :);
-  states = states(states{:, 'energy'} < 300 * j_per_cm_1, :);
+  barrier_energy = estimate_barrier_energy(states);
+  states = states(states{:, 'energy'} > barrier_energy - 3000 * j_per_cm_1, :);
+  states = states(states{:, 'energy'} < barrier_energy + 300 * j_per_cm_1, :);
   states = assign_extra_properties(o3_molecule, states);
 
   num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);

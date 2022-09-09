@@ -11,12 +11,12 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
     optional.line_width (1, 1) double = 2
     optional.line_style (1, 1) string = "-"
     optional.marker_size (1, 1) double = 20
-    optional.xlim = nan
-    optional.ylim = nan
-    optional.xdir = nan
-    optional.ydir = nan
-    optional.xscale = nan
-    optional.yscale = nan
+    optional.xlim = []
+    optional.ylim = []
+    optional.xdir = []
+    optional.ydir = []
+    optional.xscale = []
+    optional.yscale = []
   end
 
   if optional.new_plot
@@ -32,22 +32,22 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
   if y_label ~= ""
     ylabel(y_label);
   end
-  if ~all(isnan(optional.xlim))
+  if ~isempty(optional.xlim)
     xlim(optional.xlim);
   end
-  if ~all(isnan(optional.ylim))
+  if ~isempty(optional.ylim)
     ylim(optional.ylim);
   end
-  if ~isnan(optional.xdir)
+  if ~isempty(optional.xdir)
     set(gca, "xdir", optional.xdir);
   end
-  if ~isnan(optional.ydir)
+  if ~isempty(optional.ydir)
     set(gca, "ydir", optional.ydir);
   end
-  if ~isnan(optional.xscale)
+  if ~isempty(optional.xscale)
     set(gca, "xscale", optional.xscale);
   end
-  if ~isnan(optional.yscale)
+  if ~isempty(optional.yscale)
     set(gca, "yscale", optional.yscale);
   end
 end
