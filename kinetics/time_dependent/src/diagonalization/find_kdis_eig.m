@@ -9,11 +9,14 @@ function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j
     dE_j
     M_per_m3
     transition_model
+    optional.K_dependent_threshold = false
     optional.check_eigenvectors = true
     optional.max_angle = 1e-3
   end
 
-  decay_coeffs_per_s = sum(get_decay_coeffs_2(o3_molecule, states, optional), 2);
+  channel_decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, ...
+    K_dependent_threshold=optional.K_dependent_threshold);
+  decay_coeffs_per_s = sum(channel_decay_coeffs_per_s, 2);
   transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j, ...
     transition_model);
   kdis_matrix_per_s = -M_per_m3 * transition_matrix_m3_per_s';
