@@ -1,8 +1,17 @@
 function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, ...
   optional)
 % Finds kdis by solving an eigenproblem
-  check_eigenvectors = get_or_default(optional, "check_eigenvectors", true);
-  max_eigenvectors = get_or_default(optional, "max_eigenvectors", 1);
+  arguments
+    o3_molecule
+    temp_k
+    sigma0_m2
+    states
+    dE_j
+    M_per_m3
+    transition_model
+    optional.check_eigenvectors = true
+    optional.max_angle = 1e-3
+  end
 
   decay_coeffs_per_s = sum(get_decay_coeffs_2(o3_molecule, states, optional), 2);
   transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j, ...
@@ -12,22 +21,12 @@ function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j
   [eivecs, eivals] = eig(kdis_matrix_per_s);
   eivals = diag(eivals);
 
-  if check_eigenvectors
-    [~, min_inds] = sort(eivals);
-  
-    kdis_per_s = nan;
-    for i = 1:max_eigenvectors
-      next_eigenvector = eivecs(:, min_inds(i));
-      if is_eigenvector_good(kdis_matrix_per_s, next_eigenvector)
-        kdis_per_s = eivals(min_inds(i));
-        break
-      end
-    end
-  
-    if isnan(kdis_per_s)
+  [kdis_per_s, min_ind] = min(eivals);
+  if optional.check_eigenvectors
+    kdis_eigenvector = eivecs(:, min_ind);
+    angle = get_eigenvector_angle(kdis_matrix_per_s, kdis_eigenvector);
+    if angle > optional.max_angle
       error("All considered eigenvectors are bad")
     end
-  else
-    kdis_per_s = min(eivals);
   end
 end

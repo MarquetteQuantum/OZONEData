@@ -1,7 +1,7 @@
 function krecs_m6_per_s = find_krec_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, ...
-  region_names, optional)
+  region_names, varargin)
 % Finds krec by solving an eigenproblem
-  kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, optional);
+  kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, varargin{:});
   equilibrium_constants_total_m3 = calculate_formation_decay_equilibrium_2(o3_molecule, states, temp_k, optional);
 
   ch = get_lower_channel_ind(o3_molecule);

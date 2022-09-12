@@ -16,16 +16,16 @@ function test_diagonalization()
   transition_model = {["cov"]};
 %   transition_model = {["sym"], ["asym"]};
   region_names = "cov";
-  optional = map_create();
-  optional('k_dependent_threshold') = 0;
+  K_dependent_threshold = false;
 
   key = get_key(o3_molecule, Js, Ks, syms);
   states = resonances(key);
-  barrier_energy = estimate_barrier_energy(states);
-  states = states(states{:, 'energy'} > barrier_energy - 3000 * j_per_cm_1, :);
-  states = states(states{:, 'energy'} < barrier_energy + 300 * j_per_cm_1, :);
-%   states = states(states{:, 'gamma_total'} < 1 * j_per_cm_1, :);
   states = assign_extra_properties(o3_molecule, states);
+  threshold_energies = get_threshold_energies_2(o3_molecule, states, K_dependent_threshold=true);
+  states = states(states{:, 'energy'} > threshold_energies(end) - 3000 * j_per_cm_1, :);
+  states = states(states{:, 'energy'} < threshold_energies(end) + 300 * j_per_cm_1, :);
+%   states = states(states{:, 'gamma_total'} < 1 * j_per_cm_1, :);
+  
 
   krec_m6_per_s = find_krec_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j, M_per_m3, transition_model, ...
     region_names, optional);
