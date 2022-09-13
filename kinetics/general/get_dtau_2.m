@@ -1,4 +1,6 @@
 function mult = get_dtau_2(J, K, sym)
+% For the version with each J and K up to 32 and 4/2 spacing in J/K after
+% sym is either total or vibrational sym in well
   if K == 0
     if J < 32
       if mod(J + sym, 2) == 0

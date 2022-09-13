@@ -8,6 +8,9 @@ function out = plot_matrix(matrix, optional)
     optional.x_tick_labels = nan
     optional.y_tick_labels = nan
     optional.cell_labels = true
+    optional.xlabel = ""
+    optional.ylabel = ""
+    optional.title = ""
   end
 
   if isempty(optional.blocks2)
@@ -84,5 +87,15 @@ function out = plot_matrix(matrix, optional)
       end
       line([optional.blocks2(i), optional.blocks2(i)], y_range, 'LineWidth', 2, 'Color', get_color('green'));
     end
+  end
+
+  if optional.xlabel ~= ""
+    xlabel(optional.xlabel);
+  end
+  if optional.ylabel ~= ""
+    ylabel(optional.ylabel);
+  end
+  if optional.title ~= ""
+    title(optional.title);
   end
 end
