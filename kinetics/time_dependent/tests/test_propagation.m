@@ -3,28 +3,28 @@ function test_propagation()
   j_per_cm_1 = getvar('j_per_cm_1');
   m_per_a0 = getvar('m_per_a0');
   
-  o3_molecule = '686';
-  Js = 24;
-  Ks = 2;
-  syms = 0;
+  o3_molecule = '666';
+  J = 20;
+  K = 0;
+  vib_sym_well = 1;
   temp_k = 298;
   M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  time_s = linspace(0, 10e-9, 51);
+  time_s = linspace(0, 20e-9, 51);
 %   transition_models = {{["cov"]}};
   transition_models = {{["sym"], ["asym"]}};
   region_names = "cov";
   K_dependent_threshold = false;
   separate_propagation = false;
 
-  key = get_key(o3_molecule, Js, Ks, syms);
+  key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
   states = resonances(key);
   states = assign_extra_properties(o3_molecule, states);
-  threshold_energies = get_threshold_energies_2(o3_molecule, states, K_dependent_threshold=true);
-  states = states(states{:, 'energy'} > threshold_energies(end) - 3000 * j_per_cm_1, :);
-  states = states(states{:, 'energy'} < threshold_energies(end) + 300 * j_per_cm_1, :);
+  ref_energy_j = get_higher_barrier_threshold(o3_molecule, J, K, vib_sym_well);
+  states = states(states{:, 'energy'} > ref_energy_j - 3000 * j_per_cm_1, :);
+  states = states(states{:, 'energy'} < ref_energy_j + 300 * j_per_cm_1, :);
 
   num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);
   initial_concentrations_per_m3 = zeros(size(states, 1) + num_reactants, 1);

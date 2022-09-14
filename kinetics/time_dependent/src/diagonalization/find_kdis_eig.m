@@ -31,5 +31,7 @@ function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j
     if angle > optional.max_angle
       error("All considered eigenvectors are bad")
     end
+  else
+    kdis_per_s = max([kdis_per_s, 0]);
   end
 end

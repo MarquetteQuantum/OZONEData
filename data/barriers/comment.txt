@@ -1,0 +1,2 @@
+Barrier positions (in Bohr) and energies (in cm^-1) as a function of J and K. J = [0:2:32, 36:4:64], K = 0:2:20, sym = 1/1 (total).
+Barriers for all symmetries are approximately the same, so only one symmetry is calculated and these results can be used for all symmetries.
