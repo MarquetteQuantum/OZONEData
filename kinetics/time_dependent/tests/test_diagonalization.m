@@ -4,24 +4,22 @@ function test_diagonalization()
   j_per_cm_1 = getvar('j_per_cm_1');
   m_per_a0 = getvar('m_per_a0');
   
-  o3_molecule = '666';
+  o3_molecule = '686';
   Js = [0:32, 36:4:64];
-%   Js = 40;
   Ks = 0:20;
-%   Ks = 10;
   vib_syms_well = 0:1;
-%   vib_syms_well = 1;
   temp_k = 298;
   M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm_1;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_m2 = 1500 * m_per_a0^2;
-  transition_model = {["cov"]};
-%   transition_model = {["sym"], ["asym"]};
+%   transition_model = {["cov"]};
+  transition_model = {["sym"], ["asym"]};
   region_names = "cov";
   K_dependent_threshold = false;
 
   krecs_m6_per_s = zeros(length(Ks), length(Js), length(vib_syms_well));
+  tic
   for J_ind = 1:length(Js)
     J = Js(J_ind);
     for K_ind = 1:length(Ks)
@@ -44,6 +42,7 @@ function test_diagonalization()
       end
     end
   end
+  toc
 
   plot_matrix(krecs_m6_per_s(:, :, 1), x_tick_labels=Js, y_tick_labels=Ks, xlabel="J", ylabel="K", ...
     title="vib sym well = 0");

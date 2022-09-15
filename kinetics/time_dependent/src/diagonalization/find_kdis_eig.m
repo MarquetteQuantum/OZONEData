@@ -10,7 +10,7 @@ function kdis_per_s = find_kdis_eig(o3_molecule, temp_k, sigma0_m2, states, dE_j
     M_per_m3
     transition_model
     optional.K_dependent_threshold = false
-    optional.check_eigenvectors = true
+    optional.check_eigenvectors = false
     optional.max_angle = 1e-3
   end
 
