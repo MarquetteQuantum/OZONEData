@@ -1,15 +1,15 @@
-function mult = get_dtau_2(J, K, sym)
+function mult = get_dtau_2(J, K, vib_sym_well)
 % For the version with each J and K up to 32 and 4/2 spacing in J/K after
 % sym is either total or vibrational sym in well
   if K == 0
     if J < 32
-      if mod(J + sym, 2) == 0
+      if mod(J + vib_sym_well, 2) == 0
         mult = 1;
       else
         mult = 0;
       end
     elseif J == 32
-      if sym == 0
+      if vib_sym_well == 0
         mult = 1.5;
       else
         mult = 1;
