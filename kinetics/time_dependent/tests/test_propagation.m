@@ -3,9 +3,9 @@ function test_propagation()
   j_per_cm_1 = getvar('j_per_cm_1');
   m_per_a0 = getvar('m_per_a0');
   
-  o3_molecule = '666';
-  J = 20;
-  K = 0;
+  o3_molecule = '686';
+  J = 24;
+  K = 2;
   vib_sym_well = 1;
   temp_k = 298;
   M_per_m3 = 6.44e24;
@@ -14,10 +14,12 @@ function test_propagation()
   sigma0_tran_m2 = 1500 * m_per_a0^2;
   time_s = linspace(0, 20e-9, 51);
 %   transition_models = {{["cov"]}};
-  transition_models = {{["sym"], ["asym"]}};
-  region_names = "cov";
+%   transition_models = {{["sym"], ["asym"]}};
+  transition_models = {{["sym"]}, {["asym"]}};
+  
+  region_names = ["sym", "asym"];
   K_dependent_threshold = false;
-  separate_propagation = false;
+  separate_propagation = true;
 
   key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
   states = resonances(key);
@@ -46,12 +48,10 @@ function test_propagation()
     separate_propagation=separate_propagation);
   toc
 
-  ch = get_lower_channel_ind(o3_molecule);
-  Keq_m3 = sum(equilibrium_constants_m3(:, ch, 1));
-  O3_per_m3 = sum(concentrations_per_m3(:, 1 : end - num_reactants, 1), 2);
-  dO3dt_per_m3_s = sum(derivatives_per_m3_s(:, 1 : end - num_reactants, 1), 2);
-  reactants_per_m3 = concentrations_per_m3(:, end - 1 : end, 1);
-  krec_m6_per_s = dO3dt_per_m3_s ./ (prod(reactants_per_m3, 2) - O3_per_m3 / Keq_m3) / M_per_m3;
+  channel_ind = get_lower_channel_ind(o3_molecule);
+  region_ind = 1;
+  krec_m6_per_s = get_krec(concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3, num_reactants, ...
+    channel_ind, region_ind, M_per_m3);
 
   x_lim = [time_s(3), time_s(end)] * 1e9;
   my_plot(time_s * 1e9, krec_m6_per_s, "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
