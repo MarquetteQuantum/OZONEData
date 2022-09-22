@@ -4,7 +4,7 @@ function res = do3dt(transition_matrix_mod_m3_per_s, decay_rates_per_s, equilibr
 % transition_matrix_mod(i, j) has full transition rate constant from j-th to i-th state
 % transition_matrix_mod(i, i) has negative sum of full transition rate constants from i-th to all other states
 % decay_rates and equilibrium_constants have number of columns equal to number of distinct channels in a molecule
-% all_concs is a vector of full concentrations for all states of O3 and reactants
+% all_concs is a column vector of full concentrations for all states of O3 and reactants
 % Total concentrations of reactants are stored in the last 4 elements of all_concs
 % in order: reactant 1, 2 of channel 1, then reactant 1, 2 of channel 2
 % For 666 only channel 1 exists
