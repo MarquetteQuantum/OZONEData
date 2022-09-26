@@ -33,7 +33,7 @@ function [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3]
   if ~optional.separate_propagation
     [concentrations_total_per_m3, derivatives_total_per_m3_s] = propagate_concentrations(o3_molecule, states, ...
       initial_concentrations_per_m3, equilibrium_constants_total_m3, decay_rates_per_s, time_s, sigma0_m2, temp_k, ...
-      M_conc_per_m3, dE_j, transition_models{1});
+      M_conc_per_m3, dE_j, transition_models{1}, region_names);
 
     last_o3_ind = size(states, 1);
     concentrations_per_m3 = repmat(concentrations_total_per_m3, [1, 1, length(region_names)]);
