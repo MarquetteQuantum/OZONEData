@@ -1,6 +1,6 @@
 function [mol, J, Ks, p, K0_sym, is_half_integer] = get_flat_key_info(key)
 % Extracts global calculation properties from key.
-  key_tokens = split(key, '\');
+  key_tokens = split(key, filesep);
   elem_prefixes = {'mol', 'J', 'K', 'p', 'sym', 'half_integers'};
   presence_only = [false, false, false, false, false, true];
   elem_values = cell(size(elem_prefixes));
