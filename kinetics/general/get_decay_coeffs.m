@@ -1,6 +1,6 @@
 function kdecs_per_s = get_decay_coeffs(o3_molecule, states, threshold_energies_j)
 % Returns decay coefficients for given states. Columns correspond to channels.
-  hbar_js = getvar('hbar_js');
+  hbar_js = get_hbar_js();
   if o3_molecule == "666"
     kdecs_per_s = states{:, 'gamma_total'} / hbar_js;
   else

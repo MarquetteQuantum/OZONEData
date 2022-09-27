@@ -1,6 +1,6 @@
 function atom_masses = get_atom_masses(molecule)
 % Converts string description of ozone isotopomer to an array of masses for constituent atoms
-  oxygen_kg = getvar('oxygen_amu') * getvar('kg_per_amu');
+  oxygen_kg = get_oxygen_mass_amu() * get_kg_per_amu();
   if isstring(molecule)
     molecule = convertStringsToChars(molecule);
   end
