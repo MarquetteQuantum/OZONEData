@@ -9,7 +9,7 @@ function read_resonances_global()
   
   resonances = [];
   for i = 1:length(data_sets)
-    data_path = ['data\resonances\mol_', data_sets{i}];
+    data_path = fullfile('data', 'resonances', ['mol_', data_sets{i}]);
     new_resonances = read_resonances(data_path, formats{i}, optional);
     resonances = [resonances; new_resonances];
   end
