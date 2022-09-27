@@ -1,6 +1,6 @@
 function res_table = transform_kinetic_data(data_raw, format, J, Ks, p, K0_sym, is_half_integer)
 % Transforms raw data matrix to table form convenient for kinetic calculations
-  j_per_cm_1 = getvar('j_per_cm_1');
+  j_per_cm = get_j_per_cm();
 
   k_probs = zeros(size(data_raw, 1), J + 1);
   if Ks ~= -1
@@ -39,7 +39,7 @@ function res_table = transform_kinetic_data(data_raw, format, J, Ks, p, K0_sym, 
     
     % convert energy units from cm^-1 to J for 666-specific fields
     select_columns = {'energy', 'gamma_total', 'A', 'B', 'C'};
-    res_table{:, select_columns} = res_table{:, select_columns} * j_per_cm_1;
+    res_table{:, select_columns} = res_table{:, select_columns} * j_per_cm;
     
   elseif format == "686"
     variable_names = {...
@@ -68,7 +68,7 @@ function res_table = transform_kinetic_data(data_raw, format, J, Ks, p, K0_sym, 
   if format == "alex" || format == "686"
     % convert energy units from cm^-1 to J
     select_columns = {'energy', 'gamma_a', 'gamma_b', 'A', 'B', 'C'};
-    res_table{:, select_columns} = res_table{:, select_columns} * j_per_cm_1;
+    res_table{:, select_columns} = res_table{:, select_columns} * j_per_cm;
     
     % add gamma total
     res_table{:, 'gamma_total'} = res_table{:, 'gamma_a'} + res_table{:, 'gamma_b'};
