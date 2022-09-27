@@ -10,7 +10,7 @@ function energy_j = estimate_barrier_energy(o3_molecule, J, K)
   if isempty(interpolant)
     known_Js = [0:2:32, 36:4:64];
     known_Ks = 0:2:20;
-    barrier_energies = dlmread(['data\barriers\', o3_molecule, '\S\barrier_energies.txt']) * getvar('j_per_cm_1');
+    barrier_energies = dlmread(fullfile('data', 'barriers', o3_molecule, 'S', 'barrier_energies.txt')) * get_j_per_cm();
     
     [J_mesh, K_mesh] = meshgrid(known_Js, known_Ks);
     interp_data = horzcat(J_mesh(:), K_mesh(:), barrier_energies(:));
