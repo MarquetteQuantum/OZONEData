@@ -29,7 +29,7 @@ function recursive_read_all_flat_core(path, header_lines, map, optional, delim)
       recursive_read_all_flat_core(full_path, header_lines, map, optional, delim);
     else
       delim_pos = strfind(full_path, delim);
-      first_include_pos = find(delim == filesep, include_num_levels + 1, 'last');
+      first_include_pos = find(delim == filesep, include_num_levels, 'last');
       key = full_path(delim_pos + first_include_pos(1) : end - length(file_name) - 1);
       if add_new_only == 1 && isKey(map, key)
         continue
