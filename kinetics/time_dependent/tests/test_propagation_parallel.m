@@ -27,7 +27,7 @@ function test_propagation_parallel()
   krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
   krecs_vector = zeros(numel(krecs_m6_per_s), 1);
   tic
-  for data_ind = 1:length(krecs_vector)
+  parfor data_ind = 1:length(krecs_vector)
     [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(krecs_m6_per_s), data_ind);
     [M_per_m3, o3_molecule, K, J, vib_sym_well] = ...
       deal(M_concs_per_m3(M_ind), o3_molecules{o3_ind}, Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
