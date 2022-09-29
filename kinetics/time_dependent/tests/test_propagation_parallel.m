@@ -1,19 +1,17 @@
 function test_propagation_parallel()
-  resonances = getvar('resonances');
   j_per_cm = get_j_per_cm();
   m_per_a0 = get_m_per_a0();
+  ref_pressure_per_m3 = 6.44e24;
   
-  o3_molecule = '686';
-  Js = 24;
-  Ks = 0:3;
-  vib_sym_well = 1;
+  o3_molecules = {'666'};
+  Js = [0:32, 36:4:64];
+  Ks = 0:20;
+  vib_syms_well = 0:1;
   temp_k = 298;
-  M_per_m3 = 6.44e24;
+  M_concs_per_m3 = 6.44 * logspace(23, 28, 6);
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  pressure_ratio = M_per_m3 / 6.44e24;
-  time_s = linspace(0, 100e-9, 51) / pressure_ratio;
 
 %   transition_models = {{["cov"]}};
   transition_models = {{["sym"], ["asym"]}};
@@ -25,30 +23,23 @@ function test_propagation_parallel()
   K_dependent_threshold = false;
   separate_propagation = false;
 
-  krecs_m6_per_s = zeros(length(Ks), length(Js));
-  data = cell(numel(krecs_m6_per_s), 1);
-  for K_ind = 1:length(Ks)
-    K = Ks(K_ind);
-    for J_ind = 1:length(Js)
-      J = Js(J_ind);
-      if K > J || J > 32 && mod(K, 2) == 1
-        continue
-      end
-      key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
-      states = resonances(key);
-      states = assign_extra_properties(o3_molecule, states);
-      ref_energy_j = get_higher_barrier_threshold(o3_molecule, J, K, vib_sym_well);
-      states = states(states{:, 'energy'} > ref_energy_j - 3000 * j_per_cm, :);
-      states = states(states{:, 'energy'} < ref_energy_j + 300 * j_per_cm, :);
-
-      data_ind = sub2ind(size(krecs_m6_per_s), K_ind, J_ind);
-      data{data_ind} = states;
+  data_prefix = [fullfile('data', 'resonances'), filesep];
+  krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+  krecs_vector = zeros(numel(krecs_m6_per_s), 1);
+  tic
+  for data_ind = 1:length(krecs_vector)
+    [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(krecs_m6_per_s), data_ind);
+    [M_per_m3, o3_molecule, K, J, vib_sym_well] = ...
+      deal(M_concs_per_m3(M_ind), o3_molecules{o3_ind}, Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
+    if K > J || J > 32 && mod(K, 2) == 1
+      continue
     end
-  end
 
-  krecs_vector = zeros(size(data));
-  parfor data_ind = 1:length(data)
-    states = data{data_ind};
+    data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
+    states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
+    states = states(data_key);
+    states = process_states(o3_molecule, states);
+    
     num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);
     initial_concentrations_per_m3 = zeros(size(states, 1) + num_reactants, 1);
     initial_concentrations_per_m3(size(states, 1) + 1) = 6.44e18; % ch1, reactant 1
@@ -64,21 +55,21 @@ function test_propagation_parallel()
         initial_concentrations_per_m3(size(states, 1) + 2) / sqrt(Kex);
     end
   
-    tic
+    pressure_ratio = M_per_m3 / ref_pressure_per_m3;
+    time_s = linspace(0, 100e-9, 51) / pressure_ratio;
     [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3] = propagate_concentrations_regions(...
       o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, ...
       transition_models, region_names, K_dependent_threshold=K_dependent_threshold, ...
       separate_propagation=separate_propagation);
-    toc
   
     channel_ind = get_lower_channel_ind(o3_molecule);
     region_ind = 1;
     next_krec_m6_per_s = get_krec(concentrations_per_m3(:, :, region_ind), derivatives_per_m3_s(:, :, region_ind), ...
       equilibrium_constants_m3(:, :, region_ind), M_per_m3, channel_ind);
     krecs_vector(data_ind) = next_krec_m6_per_s(end);
-  
-    plot_time_ns = time_s(1 : length(next_krec_m6_per_s)) * 1e9;
-    x_lim = [plot_time_ns(2), plot_time_ns(end)];
-    my_plot(plot_time_ns, next_krec_m6_per_s, "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
   end
+  toc
+  
+  krecs_m6_per_s = reshape(krecs_vector, size(krecs_m6_per_s));
+  save("krecs.mat", "krecs_m6_per_s");
 end
