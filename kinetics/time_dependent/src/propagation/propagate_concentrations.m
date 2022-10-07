@@ -11,9 +11,9 @@ function [concentrations_per_m3, derivatives_per_m3_s] = propagate_concentration
   channel_ind = get_lower_channel_ind(o3_molecule);
   equilibrium_constants_region_m3 = equilibrium_constants_m3 .* states{:, region_names(1)};
   event_func = get_ode_event_handler(ode_func, states{:, region_names(1)}, equilibrium_constants_region_m3, ...
-    M_conc_per_m3, channel_ind);
+    M_conc_per_m3, channel_ind, time_s);
 
   options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15, 'Events', event_func);
-  [~, concentrations_per_m3, te, ye, ie] = ode89(ode_func, time_s, initial_concentrations_per_m3, options);
+  [~, concentrations_per_m3, ~, ~, ~] = ode89(ode_func, time_s, initial_concentrations_per_m3, options);
   derivatives_per_m3_s = row_function(@(row) ode_func(0, row')', concentrations_per_m3);
 end
