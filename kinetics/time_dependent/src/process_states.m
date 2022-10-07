@@ -1,4 +1,4 @@
-function states = process_states(o3_molecule, states)
+function [states, ref_energy_j] = process_states(o3_molecule, states)
 % Assigns extra properties and cuts by energy. Assumes the states are given for a signle combination of JKs.
   j_per_cm = get_j_per_cm();
   states = assign_extra_properties(o3_molecule, states);
