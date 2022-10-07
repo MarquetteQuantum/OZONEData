@@ -3,15 +3,14 @@ function test_propagation_parallel()
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
   
-%   o3_molecules = {'666', '686'};
-  o3_molecules = {'686'};
-  Js = [0:32, 36:4:64];
+  o3_molecules = {'666', '686'};
+  Js = [0:32, 36:4:40];
 %   Js = 24:25;
   Ks = 0:20;
   vib_syms_well = 0:1;
   temp_k = 298;
-%   M_concs_per_m3 = 6.44 * logspace(23, 28, 6);
-  M_concs_per_m3 = 6.44e24;
+  M_concs_per_m3 = 6.44 * logspace(23, 28, 6);
+%   M_concs_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
@@ -26,17 +25,26 @@ function test_propagation_parallel()
   K_dependent_threshold = false;
   separate_propagation = false;
 
-  data_prefix = [fullfile('data', 'resonances'), filesep];
-  krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
-  propagation_times = ...
-    zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
-  execution_times = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+  save("env.mat", "o3_molecules", "Js", "Ks", "vib_syms_well", "M_concs_per_m3");
+  if isfile("krecs.mat")
+    load("krecs.mat");
+    remaining_inds = find(krecs_m6_per_s == 0);
+  else
+    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    propagation_times = ...
+      zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    execution_times = ...
+      zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+  end
+  
+  home_path = getenv("HOME");
+  data_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'resonances'), filesep];
   data_queue = parallel.pool.DataQueue;
   data_queue.afterEach(@data_handler);
-
   parpool(64);
   tic
-  parfor data_ind = 1:numel(krecs_m6_per_s)
+  parfor ind_ind = 1:length(remaining_inds)
+    data_ind = remaining_inds(ind_ind);
     current_task = getCurrentTask();
     [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(krecs_m6_per_s), data_ind);
     [M_per_m3, o3_molecule, K, J, vib_sym_well] = ...
@@ -45,7 +53,7 @@ function test_propagation_parallel()
       ", sym=" + vib_sym_well + " started at " + string(datetime));
     
     if K > J || J > 32 && mod(K, 2) == 1
-      disp(current_task.ID + ": Skipping J=" + J + ", K=" + K);
+      disp(current_task.ID + ": Dataset does not exist. Skipping J=" + J + ", K=" + K);
       continue
     end
 
@@ -53,6 +61,11 @@ function test_propagation_parallel()
     states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
     states = states(data_key);
     states = process_states(o3_molecule, states);
+
+    if J >= 44
+      disp(current_task.ID + ": Skipping strategy. Skipping J=" + J + ", K=" + K);
+      continue
+    end
     
     num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);
     initial_concentrations_per_m3 = zeros(size(states, 1) + num_reactants, 1);
@@ -70,7 +83,7 @@ function test_propagation_parallel()
     end
   
     pressure_ratio = M_per_m3 / ref_pressure_per_m3;
-    time_s = linspace(0, 100e-9, 51) / pressure_ratio;
+    time_s = linspace(0, 1000e-9, 501) / pressure_ratio;
     tic
     [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3] = propagate_concentrations_regions(...
       o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, ...
