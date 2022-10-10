@@ -11,6 +11,7 @@ function handle = get_ode_event_handler(derivatives_func, region_probs, equilibr
     eval_times_s
     optional.comparison_factor = 2
     optional.convergence = 0.01
+    optional.min_time_steps = 2
   end
 
   krecs_m6_per_s = zeros(size(eval_times_s));
@@ -42,7 +43,7 @@ function handle = get_ode_event_handler(derivatives_func, region_probs, equilibr
       
       krecs_m6_per_s(next_time_ind) = krec_m6_per_s;
       comparison_ind = floor(next_time_ind / optional.comparison_factor);
-      if comparison_ind > 0 && ...
+      if next_time_ind > optional.min_time_steps && comparison_ind > 0 &&  ...
           abs(krecs_m6_per_s(next_time_ind) / krecs_m6_per_s(comparison_ind) - 1) < optional.convergence
         value = 0;
       end
