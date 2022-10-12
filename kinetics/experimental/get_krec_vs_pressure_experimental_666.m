@@ -1,5 +1,5 @@
 function data = get_krec_vs_pressure_experimental_666()
-% Returns experimental data for krec (2nd col) in m^6/s as a function of pressure in bar (1st col)
+% Returns experimental data for krec (2nd col, in m^6/s) as a function of pressure (1st col, in bar)
   data = [...
     3.333059210527070E-02	6.334720947444890E-46;
     6.666118421054150E-02	6.334720947444890E-46;
