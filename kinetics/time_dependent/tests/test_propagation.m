@@ -1,6 +1,7 @@
 function test_propagation()
-  j_per_cm_1 = get_j_per_cm();
+  j_per_cm = get_j_per_cm();
   m_per_a0 = get_m_per_a0();
+  ref_pressure_per_m3 = 6.44e24;
   
   o3_molecule = '666';
   J = 24;
@@ -8,11 +9,15 @@ function test_propagation()
   vib_sym_well = 0;
   temp_k = 298;
   M_per_m3 = 6.44e24;
-  dE_j = [-43.13, nan] * j_per_cm_1;
+  dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
-  pressure_ratio = M_per_m3 / 6.44e24;
-  time_s = linspace(0, 1000e-9, 501) / pressure_ratio;
+  energy_range = [-3000, 300] * j_per_cm;
+  gamma_range = [1e-6, inf] * j_per_cm;
+
+  pressure_ratio = M_per_m3 / ref_pressure_per_m3;
+  time_s = linspace(0, 10000e-9, 5001) / pressure_ratio;
+
 %   transition_models = {{["cov"]}};
   transition_models = {{["sym"], ["asym"]}};
 %   transition_models = {{["sym"]}, {["asym"]}};
@@ -26,7 +31,7 @@ function test_propagation()
   data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
   states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
   states = states(data_key);
-  states = process_states(o3_molecule, states);
+  states = process_states(o3_molecule, states, energy_range, gamma_range);
 
   num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);
   initial_concentrations_per_m3 = zeros(size(states, 1) + num_reactants, 1);
@@ -53,6 +58,7 @@ function test_propagation()
   krec_m6_per_s = get_krec(concentrations_per_m3(:, :, region_ind), derivatives_per_m3_s(:, :, region_ind), ...
     equilibrium_constants_m3(:, :, region_ind), M_per_m3, channel_ind);
 
+  krec_m6_per_s(end) = [];
   plot_time_ns = time_s(1 : length(krec_m6_per_s)) * 1e9;
   x_lim = [plot_time_ns(2), plot_time_ns(end)];
   my_plot(plot_time_ns, krec_m6_per_s, "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
