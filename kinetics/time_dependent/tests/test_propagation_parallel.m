@@ -14,9 +14,12 @@ function test_propagation_parallel()
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 1500 * m_per_a0^2;
+  energy_range = [-3000, 300] * j_per_cm;
+  gamma_range = [1e-6, inf] * j_per_cm;
 
 %   transition_models = {{["cov"]}};
   transition_models = {{["sym"], ["asym"]}};
+%   transition_models = {{["sym"], ["asym"], ["vdw_a_sym", "vdw_a_asym"], ["vdw_b"]}};
 %   transition_models = {{["sym"]}, {["asym"]}};
   
   region_names = ["cov"];
@@ -25,7 +28,7 @@ function test_propagation_parallel()
   K_dependent_threshold = false;
   separate_propagation = false;
 
-  save("env.mat", "o3_molecules", "Js", "Ks", "vib_syms_well", "M_concs_per_m3");
+  save("env.mat");
   if isfile("krecs.mat")
     load("krecs.mat");
     remaining_inds = find(krecs_m6_per_s == 0);
@@ -35,6 +38,7 @@ function test_propagation_parallel()
       zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
     execution_times = ...
       zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    remaining_inds = 1:numel(krecs_m6_per_s);
   end
   
   home_path = getenv("HOME");
@@ -45,25 +49,20 @@ function test_propagation_parallel()
   tic
   parfor ind_ind = 1:length(remaining_inds)
     data_ind = remaining_inds(ind_ind);
-    current_task = getCurrentTask();
     [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(krecs_m6_per_s), data_ind);
     [M_per_m3, o3_molecule, K, J, vib_sym_well] = ...
       deal(M_concs_per_m3(M_ind), o3_molecules{o3_ind}, Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
-    disp(current_task.ID + ": pressure=" + M_per_m3 + ", molecule=" + o3_molecule + ", K=" + K + ", J=" + J + ...
-      ", sym=" + vib_sym_well + " started at " + string(datetime));
     
     if K > J || J > 32 && mod(K, 2) == 1
-      disp(current_task.ID + ": Dataset does not exist. Skipping J=" + J + ", K=" + K);
       continue
     end
 
     data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
     states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
     states = states(data_key);
-    states = process_states(o3_molecule, states);
+    states = process_states(o3_molecule, states, energy_range, gamma_range);
 
     if J >= 44
-      disp(current_task.ID + ": Skipping strategy. Skipping J=" + J + ", K=" + K);
       continue
     end
     
@@ -83,7 +82,7 @@ function test_propagation_parallel()
     end
   
     pressure_ratio = M_per_m3 / ref_pressure_per_m3;
-    time_s = linspace(0, 1000e-9, 501) / pressure_ratio;
+    time_s = linspace(0, 10000e-9, 5001) / pressure_ratio;
     tic
     [concentrations_per_m3, derivatives_per_m3_s, equilibrium_constants_m3] = propagate_concentrations_regions(...
       o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, ...
@@ -97,9 +96,6 @@ function test_propagation_parallel()
       derivatives_per_m3_s(end, :, region_ind), equilibrium_constants_m3(:, :, region_ind), M_per_m3, channel_ind);
     propagation_time_s = time_s(size(concentrations_per_m3, 1) - 1);
     send(data_queue, [M_ind, o3_ind, K_ind, J_ind, sym_ind, next_krec_m6_per_s, propagation_time_s, execution_time]);
-    disp(current_task.ID + ": pressure=" + M_per_m3 + ", molecule=" + o3_molecule + ", K=" + K + ", J=" + J + ...
-      ", sym=" + vib_sym_well + " finished propagation at " + string(datetime) + " after " + ...
-      execution_time + " seconds");
   end
   toc
 
