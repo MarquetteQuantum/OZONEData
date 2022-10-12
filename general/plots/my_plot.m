@@ -36,6 +36,7 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
     xlim(optional.xlim);
   end
   if ~isempty(optional.ylim)
+%     set_y_limits(optional.ylim);
     ylim(optional.ylim);
   end
   if ~isempty(optional.xdir)
