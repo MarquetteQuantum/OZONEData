@@ -5,7 +5,7 @@ function [states, ref_energy_j] = process_states(o3_molecule, states, energy_ran
     get_higher_barrier_threshold(o3_molecule, states{1, 'J'}, states{1, 'K'}, states{1, 'vib_sym_well'});
   states = states(states{:, 'energy'} > ref_energy_j + energy_range(1), :);
   states = states(states{:, 'energy'} < ref_energy_j + energy_range(2), :);
-  states{states{:, 'energy'} < threshold_energy_j, 'gamma_total'} = 0;
-  states{states{:, 'gamma_total'} < gamma_range(1), 'gamma_total'} = 0;
+  states{states{:, 'energy'} < threshold_energy_j, {'gamma_a', 'gamma_b', 'gamma_total'}} = 0;
+  states{states{:, 'gamma_total'} < gamma_range(1), {'gamma_a', 'gamma_b', 'gamma_total'}} = 0;
   states(states{:, 'gamma_total'} > gamma_range(2), :) = [];
 end
