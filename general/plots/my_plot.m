@@ -1,11 +1,11 @@
-function figure = my_plot(xs, ys, x_label, y_label, optional)
+function handle = my_plot(xs, ys, x_label, y_label, optional)
 % Plots data in plots_data using several predefined options
   arguments
     xs (1, :) double
     ys (1, :) double
     x_label (1, 1) string = ""
     y_label (1, 1) string = ""
-    optional.new_plot (1, 1) logical = true
+    optional.figure_id = 0
     optional.color = "b"
     optional.marker (1, 1) string = "."
     optional.line_width (1, 1) double = 2
@@ -19,11 +19,8 @@ function figure = my_plot(xs, ys, x_label, y_label, optional)
     optional.yscale = []
   end
 
-  if optional.new_plot
-    create_common_plot();
-  end
-
-  figure = plot(xs, ys, 'Color', optional.color, 'Marker', optional.marker, 'LineWidth', optional.line_width, ...
+  create_common_plot(optional.figure_id);
+  handle = plot(xs, ys, 'Color', optional.color, 'Marker', optional.marker, 'LineWidth', optional.line_width, ...
     'LineStyle', optional.line_style, 'MarkerSize', optional.marker_size);
 
   if x_label ~= ""
