@@ -3,7 +3,7 @@ function test_propagation()
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
   
-  o3_molecule = '666';
+  o3_molecule = '686';
   J = 24;
   K = 2;
   vib_sym_well = 0;
@@ -11,9 +11,10 @@ function test_propagation()
   M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
-  sigma0_tran_m2 = 1500 * m_per_a0^2;
+  sigma0_tran_m2 = 2000 * m_per_a0^2;
   energy_range = [-3000, 300] * j_per_cm;
-  gamma_range = [1e-6, inf] * j_per_cm;
+  gamma_range = [1, inf] * j_per_cm;
+  closed_channel = "";
 
   pressure_ratio = M_per_m3 / ref_pressure_per_m3;
   time_s = linspace(0, 10000e-9, 5001) / pressure_ratio;
@@ -22,8 +23,7 @@ function test_propagation()
   transition_models = {{["sym"], ["asym"]}};
 %   transition_models = {{["sym"]}, {["asym"]}};
   
-  region_names = ["cov"];
-%   region_names = ["sym", "asym"];
+  region_names = ["cov", "sym", "asym"];
   K_dependent_threshold = false;
   separate_propagation = false;
 
@@ -31,7 +31,7 @@ function test_propagation()
   data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
   states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
   states = states(data_key);
-  states = process_states(o3_molecule, states, energy_range, gamma_range);
+  states = process_states(o3_molecule, states, energy_range, gamma_range, closed_channel=closed_channel);
 
   num_reactants = iif(is_monoisotopic(o3_molecule), 2, 4);
   initial_concentrations_per_m3 = zeros(size(states, 1) + num_reactants, 1);
@@ -54,12 +54,15 @@ function test_propagation()
   toc
 
   channel_ind = get_lower_channel_ind(o3_molecule);
-  region_ind = 1;
-  krec_m6_per_s = get_krec(concentrations_per_m3(:, :, region_ind), derivatives_per_m3_s(:, :, region_ind), ...
-    equilibrium_constants_m3(:, :, region_ind), M_per_m3, channel_ind);
+  krecs_m6_per_s = zeros(size(concentrations_per_m3, 1), length(region_names));
+  for region_ind = 1:length(region_names)
+    % Uses total concentrations and derivatives (first region has to be cov)
+    krecs_m6_per_s(:, region_ind) = get_krec(concentrations_per_m3(:, :, 1), derivatives_per_m3_s(:, :, region_ind), ...
+      equilibrium_constants_m3(:, :, 1), M_per_m3, channel_ind);
+  end
+  krecs_m6_per_s(end, :) = [];
 
-  krec_m6_per_s(end) = [];
-  plot_time_ns = time_s(1 : length(krec_m6_per_s)) * 1e9;
+  plot_time_ns = time_s(1 : size(krecs_m6_per_s, 1)) * 1e9;
   x_lim = [plot_time_ns(2), plot_time_ns(end)];
-  my_plot(plot_time_ns, krec_m6_per_s, "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
+  my_plot(plot_time_ns, krecs_m6_per_s(:, 1), "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
 end
