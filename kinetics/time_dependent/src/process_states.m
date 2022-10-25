@@ -28,6 +28,6 @@ function [states, ref_energy_j] = process_states(o3_molecule, states, energy_ran
     states{sym_states, "asym"} = 0;
     asym_states = ~sym_states;
     states{asym_states, "asym"} = sum(states{asym_states, ["sym", "asym"]}, 2);
-    states{asym_states, "asym"} = 0;
+    states{asym_states, "sym"} = 0;
   end
 end
