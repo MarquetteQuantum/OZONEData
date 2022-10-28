@@ -25,7 +25,7 @@ function [states, ref_energy_j] = process_states(o3_molecule, states, energy_ran
   states(states{:, 'gamma_total'} > gamma_range(2), :) = [];
 
   if optional.localization_threshold > 0
-    prob_fields = ["sym", "asym", "vdw_a_sym", "vdw_a_asym", "vdw_b"];
+    prob_fields = ["sym", "asym", "vdw_a_sym", "vdw_a_asym", "vdw_b", "inf"];
     for i = 1:size(states, 1)
       localized_prob = states{i, prob_fields};
       localized_prob(localized_prob < optional.localization_threshold) = 0;
