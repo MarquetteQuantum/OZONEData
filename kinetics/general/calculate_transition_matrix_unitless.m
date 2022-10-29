@@ -22,6 +22,14 @@ function probs = select_region_probabilities(states, transition_model)
 % Merges region probabilities according to the groups specified in transition_model
   probs = zeros(size(states, 1), length(transition_model));
   for i = 1:length(transition_model)
-    probs(:, i) = sum(states{:, transition_model{i}}, 2);
+    for j = 1:length(transition_model{i})
+      region_name = transition_model{i}(j);
+      % reduce transition probablity for asym states
+      if region_name == "asym"
+        probs(:, i) = probs(:, i) + states{:, region_name} / sqrt(2);
+      else
+        probs(:, i) = probs(:, i) + states{:, region_name};
+      end
+    end
   end
 end
