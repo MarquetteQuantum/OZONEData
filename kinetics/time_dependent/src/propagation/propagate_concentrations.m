@@ -5,9 +5,10 @@ function [concentrations_per_m3, derivatives_per_m3_s] = propagate_concentration
   transition_matrix_m3_per_s = calculate_transition_matrix(o3_molecule, temp_k, sigma0_m2, states, dE_j, ...
     transition_model);
   transition_matrix_mod_m3_per_s = (transition_matrix_m3_per_s - diag(sum(transition_matrix_m3_per_s, 2)))';
-
   ode_func = @(t, y) do3dt(transition_matrix_mod_m3_per_s, decay_rates_per_s, equilibrium_constants_m3, ...
     M_conc_per_m3, y);
+
+  % krec is calculated wrt the lowest channel of the first region
   channel_ind = get_lower_channel_ind(o3_molecule);
   equilibrium_constants_region_m3 = equilibrium_constants_m3 .* states{:, region_names(1)};
   event_func = get_ode_event_handler(ode_func, states{:, region_names(1)}, equilibrium_constants_region_m3, ...
