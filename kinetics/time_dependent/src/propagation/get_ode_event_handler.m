@@ -28,17 +28,17 @@ function [event_handler, krec_return] = get_ode_event_handler(derivatives_func, 
     direction = 0;
 
     if isempty(eval_times_s) || time_s >= eval_times_s(end) + eval_step_s
-      num_reactants = length(concentrations_per_m3) - size(region_probs, 1);
+      num_states = iif(optional.separate_concentrations, numel(region_probs), size(region_probs, 1));
       derivatives_per_m3_s = derivatives_func(0, concentrations_per_m3);
-      derivatives_o3_per_m3_s = derivatives_per_m3_s(1 : end - num_reactants);
+      derivatives_o3_per_m3_s = derivatives_per_m3_s(1:num_states);
       if ~optional.separate_concentrations
         derivatives_region_per_m3_s = region_probs .* derivatives_o3_per_m3_s;
       else
         derivatives_region_per_m3_s = reshape(derivatives_o3_per_m3_s, [], size(region_probs, 2));
       end
       derivatives_region_per_m3_s = sum(derivatives_region_per_m3_s, 1);
-      concentrations_o3_per_m3 = concentrations_per_m3(1 : end - num_reactants);
-      concentrations_reactants_per_m3 = reshape(concentrations_per_m3(end - num_reactants + 1 : end), 2, []);
+      concentrations_o3_per_m3 = concentrations_per_m3(1:num_states);
+      concentrations_reactants_per_m3 = reshape(concentrations_per_m3(num_states + 1 : end), 2, []);
       next_krecs_m6_per_s = get_krec(derivatives_region_per_m3_s, sum(concentrations_o3_per_m3), ...
         equilibrium_constants_full_m3(channel_ind), M_per_m3, concentrations_reactants_per_m3(:, channel_ind));
       
