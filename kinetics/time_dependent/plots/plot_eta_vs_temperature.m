@@ -1,20 +1,18 @@
-function plot_delta_vs_pressure()
-% Plots delta vs pressure
-  data_path = "C:\Users\3830gaydayi\Desktop\buf\krecs\686\sym_asym_sep\";
+function plot_eta_vs_temperature()
+% Plots eta vs temperature
+  data_path = "C:\Users\3830gaydayi\Desktop\buf\krecs\all\no_vdw\gamma_min_0";
   color_ind = 1;
   load(fullfile(data_path, "env.mat"));
   load(fullfile(data_path, "krecs.mat"));
   
-  krecs_dtau = zeros(size(krecs_m6_per_s, 1), size(krecs_m6_per_s, 2), size(krecs_m6_per_s, 6));
+  krecs_dtau = zeros(size(krecs_m6_per_s, 1), size(krecs_m6_per_s, 2));
   for pressure_ind = 1:size(krecs_dtau, 1)
     for mol_ind = 1:size(krecs_dtau, 2)
-      for region_ind = 1:size(krecs_dtau, 3)
-        krecs_slice = squeeze(krecs_m6_per_s(pressure_ind, mol_ind, :, :, :, region_ind));
-        krecs_dtau(pressure_ind, mol_ind, region_ind) = sum_krec_dtau(krecs_slice, Ks, Js, vib_syms_well);
-      end
+      krecs_slice = squeeze(krecs_m6_per_s(pressure_ind, mol_ind, :, :, :));
+      krecs_dtau(pressure_ind, mol_ind) = sum_krec_dtau(krecs_slice, Ks, Js, vib_syms_well);
     end
   end
-  deltas = (2/3 * krecs_dtau(:, 2, 1) ./ krecs_dtau(:, 1, 1) - 1) * 100;
+  deltas = (2/3 * krecs_dtau(:, 2) ./ krecs_dtau(:, 1) - 1) * 100;
 
   pressure_bar = m_conc_to_bar(M_concs_per_m3, temp_k);
   colors = distinguishable_colors(10);
