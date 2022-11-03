@@ -3,6 +3,7 @@ function test_propagation()
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
   ch1_concs_per_m3 = [6.44e18, 6.44e20];
+  base_time_s = linspace(0, 10000e-9, 5001);
   
   o3_molecule = '686';
   J = 24;
@@ -20,8 +21,6 @@ function test_propagation()
   closed_channel = "";
   localization_threshold = 1e-3;
 
-  pressure_ratio = M_per_m3 / ref_pressure_per_m3;
-  time_s = linspace(0, 10000e-9, 5001) / pressure_ratio;
   transition_model = {["sym"], ["asym"]};
   region_names = ["sym", "asym"];
   
@@ -35,6 +34,9 @@ function test_propagation()
   initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
     K_dependent_threshold=K_dependent_threshold, separate_concentrations=separate_concentrations, ...
     region_names=region_names);
+  pressure_ratio = M_per_m3 / ref_pressure_per_m3;
+  time_s = base_time_s / pressure_ratio;
+  
   tic
   krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, ...
     sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
