@@ -1,2 +1,2 @@
-addpath(genpath(fileparts(mfilename("fullpath"))));
+addpath(genpath(fullfile(fileparts(mfilename("fullpath")), "src")));
 format long
