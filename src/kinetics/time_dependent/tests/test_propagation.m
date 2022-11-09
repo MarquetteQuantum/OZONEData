@@ -38,13 +38,13 @@ function test_propagation()
   time_s = base_time_s / pressure_ratio;
   
   tic
-  krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, ...
-    sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
+  [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, ...
+    time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
     separate_concentrations=separate_concentrations, transition_model=transition_model);
   toc
 
   plot_region = 1;
-  plot_time_ns = time_s(1 : size(krecs_m6_per_s, 2)) * 1e9;
+  plot_time_ns = eval_times_s * 1e9;
   x_lim = [plot_time_ns(2), plot_time_ns(end)];
   my_plot(plot_time_ns, krecs_m6_per_s(plot_region, :), "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
 end

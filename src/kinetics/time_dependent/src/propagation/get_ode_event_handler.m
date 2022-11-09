@@ -57,7 +57,8 @@ function [event_handler, krec_return] = get_ode_event_handler(derivatives_func, 
     end
   end
 
-  function krecs = get_krecs()
+  function [krecs, time] = get_krecs()
     krecs = krecs_m6_per_s;
+    time = eval_times_s;
   end
 end

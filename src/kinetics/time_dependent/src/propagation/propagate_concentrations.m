@@ -1,5 +1,6 @@
-function krecs_m6_per_s = propagate_concentrations(o3_molecule, states, initial_concentrations_per_m3, ...
-  equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, optional)
+function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, states, ...
+  initial_concentrations_per_m3, equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, ...
+  M_conc_per_m3, dE_j, region_names, optional)
 % Propagates states' concentrations. Assumes time_s is uniform.
   arguments
     o3_molecule
@@ -43,5 +44,5 @@ function krecs_m6_per_s = propagate_concentrations(o3_molecule, states, initial_
 
   options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15, 'Events', event_func);
   [~, ~, ~, ~, ~] = ode89(ode_func, time_s, initial_concentrations_per_m3, options);
-  krecs_m6_per_s = krec_return();
+  [krecs_m6_per_s, eval_times_s] = krec_return();
 end
