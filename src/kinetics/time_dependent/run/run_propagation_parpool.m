@@ -7,24 +7,26 @@ function run_propagation_parpool()
   
   o3_molecules = {'686'};
   Js = [0:32, 36:4:40];
-%   Js = 24:25;
   Ks = 0:19;
   vib_syms_well = 0:1;
+  energy_range_j = [-3000, 300] * j_per_cm;
+  gamma_range_j = [1, inf] * j_per_cm;
+
   temp_k = 298;
   M_concs_per_m3 = 6.44 * logspace(23, 28, 6);
-%   M_concs_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 2000 * m_per_a0^2;
-  energy_range = [-3000, 300] * j_per_cm;
-  gamma_range = [1, inf] * j_per_cm;
+  region_names = ["sym", "asym"];
+  
   K_dependent_threshold = false;
   separate_concentrations = true;
+  transition_model = {["sym"], ["asym"]};
+  alpha0 = 0;
+  region_factors = [1, 2];
+
   closed_channel = "";
   localization_threshold = 1e-3;
-
-  transition_model = {["sym"], ["asym"]};
-  region_names = ["sym", "asym"];
 
   save("env.mat");
   if isfile("krecs.mat")
@@ -59,7 +61,7 @@ function run_propagation_parpool()
     data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
     states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
     states = states(data_key);
-    states = process_states(o3_molecule, states, energy_range, gamma_range, closed_channel=closed_channel, ...
+    states = process_states(o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=closed_channel, ...
       localization_threshold=localization_threshold);
 
     initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
@@ -71,7 +73,8 @@ function run_propagation_parpool()
     tic
     next_krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, ...
       sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
-      separate_concentrations=separate_concentrations, transition_model=transition_model);
+      separate_concentrations=separate_concentrations, transition_model=transition_model, alpha0=alpha0, ...
+      region_factors=region_factors);
     execution_time = toc;
     propagation_time_s = time_s(size(next_krecs_m6_per_s, 2));
     send(data_queue, ...

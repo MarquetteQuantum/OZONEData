@@ -17,6 +17,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     optional.separate_concentrations = false
     optional.transition_model = {}
     optional.alpha0 = 0
+    optional.region_factors = ones(size(region_names))
   end
 
   if ~optional.separate_concentrations
@@ -24,8 +25,8 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
       "Transition model has to be specified if separate_concentrations is false");
     transition_matrix_m3_per_s = calculate_transition_matrix_unitless(states, dE_j, optional.transition_model);
   else
-    transition_matrix_m3_per_s = ...
-      calculate_transition_matrix_unitless_separate(states, dE_j, region_names, optional.alpha0);
+    transition_matrix_m3_per_s = calculate_transition_matrix_unitless_separate(states, dE_j, region_names, ...
+      optional.alpha0, region_factors=optional.region_factors);
     decay_coeffs_per_s = repmat(decay_coeffs_per_s, [length(region_names), 1]);
     equilibrium_constants_m3 = ...
       column_function(@(col) reshape(states{:, region_names} .* col, [], 1), equilibrium_constants_m3); 

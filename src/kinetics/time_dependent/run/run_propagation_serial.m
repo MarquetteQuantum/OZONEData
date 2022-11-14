@@ -23,6 +23,8 @@ function run_propagation_serial()
   separate_concentrations = true;
   transition_model = {["sym"], ["asym"]};
   alpha0 = 0;
+  region_factors = [1, 2];
+
   closed_channel = "";
   localization_threshold = 1e-3;
   
@@ -42,7 +44,8 @@ function run_propagation_serial()
   tic
   [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, ...
     time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
-    separate_concentrations=separate_concentrations, transition_model=transition_model, alpha0=alpha0);
+    separate_concentrations=separate_concentrations, transition_model=transition_model, alpha0=alpha0, ...
+    region_factors=region_factors);
   toc
 
   plot_regions = 1:2;
