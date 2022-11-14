@@ -42,7 +42,8 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
   [event_func, krec_return] = get_ode_event_handler(ode_func, sum(equilibrium_constants_m3, 1), channel_ind, ...
     M_conc_per_m3, eval_step_s, states{:, region_names}, separate_concentrations=optional.separate_concentrations);
 
-  options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15, 'Events', event_func);
-  [~, ~, ~, ~, ~] = ode89(ode_func, time_s, initial_concentrations_per_m3, options);
+%   options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15, 'Events', event_func);
+  options = odeset('RelTol', 1e-10, 'AbsTol', 1e-10, 'Events', event_func);
+  [~, ~, ~, ~, ~] = ode45(ode_func, time_s, initial_concentrations_per_m3, options);
   [krecs_m6_per_s, eval_times_s] = krec_return();
 end

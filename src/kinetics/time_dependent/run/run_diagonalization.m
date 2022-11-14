@@ -1,4 +1,4 @@
-function test_diagonalization()
+function run_diagonalization()
 % Tests finding krec via the solution of an eigenvalue problem
   resonances = getvar('resonances');
   j_per_cm_1 = getvar('j_per_cm_1');

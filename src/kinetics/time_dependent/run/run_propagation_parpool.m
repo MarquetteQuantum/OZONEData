@@ -1,4 +1,4 @@
-function test_propagation_parallel()
+function run_propagation_parpool()
   j_per_cm = get_j_per_cm();
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
