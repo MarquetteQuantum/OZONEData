@@ -17,7 +17,6 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
     region_names
     optional.K_dependent_threshold = false
     optional.separate_concentrations = false
-    optional.transition_model = {}
     optional.alpha0 = 0
     optional.region_factors = ones(size(region_names))
   end
@@ -27,6 +26,6 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
   decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, K_dependent_threshold=optional.K_dependent_threshold);
   [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, states, initial_concentrations_per_m3, ...
     equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, ...
-    separate_concentrations=optional.separate_concentrations, transition_model=optional.transition_model, ...
-    alpha0=optional.alpha0, region_factors=optional.region_factors);
+    separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, ...
+    region_factors=optional.region_factors);
 end

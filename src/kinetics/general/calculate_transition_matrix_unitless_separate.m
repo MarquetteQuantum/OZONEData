@@ -27,7 +27,7 @@ function matrix = calculate_transition_matrix_unitless_separate(states, dE_j, re
         alpha = 3 * alpha0 * ...
           (probs(state_row, region_row) * probs(state_col, region_row) / optional.region_factors(region_row) + ...
           probs(state_row, region_col) * probs(state_col, region_col) / optional.region_factors(region_col));
-        ptran = ptran * alpha;
+        ptran = ptran * alpha / optional.region_factors(region_row) / optional.region_factors(region_col);
       end
 
       energy_diff = energies_j(state_row) - energies_j(state_col);

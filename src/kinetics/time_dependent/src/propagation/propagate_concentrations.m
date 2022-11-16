@@ -15,15 +15,13 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     dE_j
     region_names
     optional.separate_concentrations = false
-    optional.transition_model = {}
     optional.alpha0 = 0
     optional.region_factors = ones(size(region_names))
   end
 
   if ~optional.separate_concentrations
-    assert(~isempty(optional.transition_model), ...
-      "Transition model has to be specified if separate_concentrations is false");
-    transition_matrix_m3_per_s = calculate_transition_matrix_unitless(states, dE_j, optional.transition_model);
+    transition_matrix_m3_per_s = calculate_transition_matrix_unitless(states, dE_j, region_names, ...
+      region_factors=optional.region_factors);
   else
     transition_matrix_m3_per_s = calculate_transition_matrix_unitless_separate(states, dE_j, region_names, ...
       optional.alpha0, region_factors=optional.region_factors);
@@ -37,13 +35,12 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
   transition_matrix_m3_per_s = (transition_matrix_m3_per_s - diag(sum(transition_matrix_m3_per_s, 2)))';
   ode_func = @(t, y) do3dt(transition_matrix_m3_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y);
 
-  % krec is calculated wrt the lowest channel of the first region
+  % krec is calculated wrt the lowest channel
   channel_ind = get_lower_channel_ind(o3_molecule);
   eval_step_s = time_s(2) - time_s(1);
   [event_func, krec_return] = get_ode_event_handler(ode_func, sum(equilibrium_constants_m3, 1), channel_ind, ...
     M_conc_per_m3, eval_step_s, states{:, region_names}, separate_concentrations=optional.separate_concentrations);
 
-%   options = odeset('RelTol', 1e-13, 'AbsTol', 1e-15, 'Events', event_func);
   options = odeset('RelTol', 1e-10, 'AbsTol', 1e-10, 'Events', event_func);
   [~, ~, ~, ~, ~] = ode45(ode_func, time_s, initial_concentrations_per_m3, options);
   [krecs_m6_per_s, eval_times_s] = krec_return();
