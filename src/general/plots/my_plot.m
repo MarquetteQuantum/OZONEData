@@ -20,6 +20,11 @@ function handle = my_plot(xs, ys, x_label, y_label, optional)
   end
 
   create_common_plot(optional.figure_id);
+  if isnumeric(optional.color) && length(optional.color) == 1
+    colors = distinguishable_colors(optional.color);
+    optional.color = colors(end, :);
+  end
+
   handle = plot(xs, ys, 'Color', optional.color, 'Marker', optional.marker, 'LineWidth', optional.line_width, ...
     'LineStyle', optional.line_style, 'MarkerSize', optional.marker_size);
 
