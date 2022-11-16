@@ -28,8 +28,8 @@ function run_propagation_serial()
   localization_threshold = 1e-3;
   
   resonances_prefix = [fullfile('data', 'resonances'), filesep];
-  barriers_prefix = [fullfile('data', 'barriers'), filesep];
   resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
+  barriers_prefix = [fullfile('data', 'barriers'), filesep];
 
   data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
   states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);

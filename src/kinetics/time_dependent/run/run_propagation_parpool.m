@@ -42,7 +42,9 @@ function run_propagation_parpool()
   end
   
   home_path = getenv("HOME");
-  data_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'resonances'), filesep];
+  resonances_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'resonances'), filesep];
+  barriers_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'barriers'), filesep];
+
   data_queue = parallel.pool.DataQueue;
   data_queue.afterEach(@data_handler);
   parpool(128);
@@ -58,10 +60,11 @@ function run_propagation_parpool()
     end
 
     data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
-    states = read_resonances(fullfile(data_prefix, data_key), o3_molecule, delim=data_prefix);
+    resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
+    states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
     states = states(data_key);
-    states = process_states(o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=closed_channel, ...
-      localization_threshold=localization_threshold);
+    states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, ...
+      closed_channel=closed_channel, localization_threshold=localization_threshold);
 
     initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
       K_dependent_threshold=K_dependent_threshold, separate_concentrations=separate_concentrations, ...
