@@ -47,7 +47,7 @@ function run_propagation_parpool()
 
   data_queue = parallel.pool.DataQueue;
   data_queue.afterEach(@data_handler);
-  parpool(128);
+  parpool('local', 128);
   tic
   parfor ind_ind = 1:length(remaining_inds)
     data_ind = remaining_inds(ind_ind);
@@ -79,7 +79,7 @@ function run_propagation_parpool()
     execution_time = toc;
     propagation_time_s = time_s(size(next_krecs_m6_per_s, 2));
     send(data_queue, ...
-      [M_ind, o3_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s(:, end)]);
+      [M_ind, o3_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s(:, end)']);
   end
   toc
 
