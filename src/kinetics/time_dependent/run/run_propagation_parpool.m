@@ -21,7 +21,6 @@ function run_propagation_parpool()
   
   K_dependent_threshold = false;
   separate_concentrations = true;
-  transition_model = {["sym"], ["asym"]};
   alpha0 = 0;
   region_factors = [1, 2];
 
@@ -73,8 +72,7 @@ function run_propagation_parpool()
     tic
     next_krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, ...
       sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=K_dependent_threshold, ...
-      separate_concentrations=separate_concentrations, transition_model=transition_model, alpha0=alpha0, ...
-      region_factors=region_factors);
+      separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors);
     execution_time = toc;
     propagation_time_s = time_s(size(next_krecs_m6_per_s, 2));
     send(data_queue, ...
