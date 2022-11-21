@@ -5,7 +5,7 @@ function run_propagation_serial()
   ch1_concs_per_m3 = [6.44e18, 6.44e20];
   base_time_s = linspace(0, 10000e-9, 5001);
   
-  o3_molecule = '666';
+  o3_molecule = '686';
   J = 24;
   K = 2;
   vib_sym_well = 0;
@@ -17,12 +17,12 @@ function run_propagation_serial()
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 2000 * m_per_a0^2;
-  region_names = ["sym"];
+  region_names = ["sym", "asym"];
   
   K_dependent_threshold = false;
   separate_concentrations = true;
   alpha0 = 0;
-  region_factors = [1];
+  region_factors = [1, 2];
 
   closed_channel = "";
   localization_threshold = 1e-3;
@@ -49,11 +49,10 @@ function run_propagation_serial()
     separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors);
   toc
 
-  plot_regions = 1;
-  plot_time_ns = eval_times_s * 1e9;
-  x_lim = [plot_time_ns(2), plot_time_ns(end)];
-  for plot_region = plot_regions
-    my_plot(plot_time_ns, krecs_m6_per_s(plot_region, :), "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
+  plot_regions = 1:2;
+  for region_ind = 1:length(plot_regions)
+    plot_time_ns = eval_times_s{region_ind} * 1e9;
+    x_lim = [plot_time_ns(2), plot_time_ns(end)];
+    my_plot(plot_time_ns, krecs_m6_per_s{region_ind}(:), "Time, ns", "k_{rec}, m^6/s", xlim=x_lim);
   end
-  krecs_m6_per_s(:, end)
 end

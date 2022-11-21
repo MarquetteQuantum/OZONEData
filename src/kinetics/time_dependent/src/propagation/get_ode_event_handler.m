@@ -9,7 +9,7 @@ function [event_handler, krec_return] = get_ode_event_handler(derivatives_func, 
     eval_step_s
     region_probs
     optional.separate_concentrations = false
-    optional.comparison_factor = 2
+    optional.comparison_factor = 1.99
     optional.convergence = 0.01
     optional.converged_steps = 2
   end
