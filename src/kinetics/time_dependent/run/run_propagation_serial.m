@@ -20,7 +20,7 @@ function run_propagation_serial()
   region_names = ["sym", "asym"];
   
   K_dependent_threshold = false;
-  separate_concentrations = true;
+  separate_concentrations = false;
   alpha0 = 0;
   region_factors = [1, 2];
 

@@ -1,5 +1,4 @@
-function all_derivatives_per_m3_s = do3dt(transition_matrix_mod_m3_per_s, decay_coeffs_per_s, ...
-  equilibrium_constants_m3, all_concs_per_m3)
+function all_derivatives_per_m3_s = do3dt(transition_matrix_mod_m3_per_s, decay_coeffs_per_s, equilibrium_constants_m3, all_concs_per_m3)
 % Evaluates O3 full concentration derivatives for given concentrations values and transition matrix
 % transition_matrix_mod(i, j) has full transition rate constant from j-th to i-th state
 % transition_matrix_mod(i, i) has negative sum of full transition rate constants from i-th to all other states
@@ -12,8 +11,7 @@ function all_derivatives_per_m3_s = do3dt(transition_matrix_mod_m3_per_s, decay_
   o3_per_m3 = all_concs_per_m3(1:size(transition_matrix_mod_m3_per_s, 1));
   reactants_per_m3 = reshape(all_concs_per_m3(size(transition_matrix_mod_m3_per_s, 1)+1 : end), 2, []);
   transition_per_m3_s = transition_matrix_mod_m3_per_s * o3_per_m3;
-  formation_per_m3_s = decay_coeffs_per_s .* equilibrium_constants_m3 .* reactants_per_m3(1, :) .* ...
-    reactants_per_m3(2, :);
+  formation_per_m3_s = decay_coeffs_per_s .* equilibrium_constants_m3 .* reactants_per_m3(1, :) .* reactants_per_m3(2, :);
   decay_per_m3_s = decay_coeffs_per_s .* o3_per_m3;
 
   derivatives_o3_per_m3_s = transition_per_m3_s + sum(formation_per_m3_s, 2) - sum(decay_per_m3_s, 2);
