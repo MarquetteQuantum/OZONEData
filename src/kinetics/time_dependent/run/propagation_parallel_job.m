@@ -1,5 +1,5 @@
-function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, ...
-  vib_syms_well, energy_range_j, gamma_range_j, temp_k, M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, optional)
+function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, ...
+  temp_k, M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, optional)
   arguments
     ref_pressure_per_m3
     base_time_s
@@ -28,12 +28,9 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     load("krecs.mat");
     remaining_inds = find(propagation_times == 0);
   else
-    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), ...
-      length(vib_syms_well), length(region_names));
-    propagation_times = ...
-      zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
-    execution_times = ...
-      zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well), length(region_names));
+    propagation_times = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    execution_times = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
     remaining_inds = 1:numel(propagation_times);
   end
   
@@ -57,24 +54,21 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
     states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
     states = states(data_key);
-    states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, ...
-      closed_channel=optional.closed_channel, localization_threshold=optional.localization_threshold);
+    states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=optional.closed_channel, ...
+      localization_threshold=optional.localization_threshold);
 
     initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
-      K_dependent_threshold=optional.K_dependent_threshold, ...
-      separate_concentrations=optional.separate_concentrations, region_names=region_names);
+      K_dependent_threshold=optional.K_dependent_threshold, separate_concentrations=optional.separate_concentrations, region_names=region_names);
     pressure_ratio = M_per_m3 / ref_pressure_per_m3;
     time_s = base_time_s / pressure_ratio;
 
     tic
-    next_krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, ...
-      sigma0_tran_m2, temp_k, M_per_m3, dE_j, region_names, K_dependent_threshold=optional.K_dependent_threshold, ...
-      separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, ...
+    next_krecs_m6_per_s = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, M_per_m3, dE_j, ...
+      region_names, K_dependent_threshold=optional.K_dependent_threshold, separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, ...
       region_factors=optional.region_factors);
     execution_time = toc;
     propagation_time_s = time_s(size(next_krecs_m6_per_s, 2));
-    send(data_queue, ...
-      [M_ind, o3_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s(:, end)']);
+    send(data_queue, [M_ind, o3_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s(:, end)']);
   end
   toc
 

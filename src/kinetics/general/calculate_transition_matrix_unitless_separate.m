@@ -37,8 +37,8 @@ function matrix = calculate_transition_matrix_unitless_separate(states, dE_j, re
         dE_ind = 1;
       end
 
-      matrix(i, j) = ptran * exp(energy_diff / dE_j(dE_ind));
-      matrix(j, i) = ptran * exp(-energy_diff / dE_j(3 - dE_ind));
+      matrix(i, j) = probs(state_col, region_col) * ptran * exp(energy_diff / dE_j(dE_ind));
+      matrix(j, i) = probs(state_row, region_row) * ptran * exp(-energy_diff / dE_j(end + 1 - dE_ind));
     end
   end
 end
