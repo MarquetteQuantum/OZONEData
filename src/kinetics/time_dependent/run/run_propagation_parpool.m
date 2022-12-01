@@ -18,6 +18,7 @@ function run_propagation_parpool()
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 2000 * m_per_a0^2;
   region_names = ["sym", "asym"];
+  require_convergence = [true, true];
   
   K_dependent_threshold = false;
   separate_concentrations = false;
@@ -29,6 +30,7 @@ function run_propagation_parpool()
 
   parpool('local', 128);
   propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, temp_k, ...
-    M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, K_dependent_threshold=K_dependent_threshold, separate_concentrations=separate_concentrations, ...
-    alpha0=alpha0, region_factors=region_factors, closed_channel=closed_channel, localization_threshold=localization_threshold);
+    M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, require_convergence, K_dependent_threshold=K_dependent_threshold, ...
+    separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors, closed_channel=closed_channel, ...
+    localization_threshold=localization_threshold);
 end

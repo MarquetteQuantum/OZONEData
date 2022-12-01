@@ -1,5 +1,5 @@
-function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, ...
-  initial_concentrations_per_m3, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, optional)
+function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_m2, temp_k, ...
+  M_conc_per_m3, dE_j, region_names, require_convergence, optional)
 % Propagates concentrations for sym and asym molecules
 % Return dimensions for concentrations and derivatives: 1st - time, 2nd - states, 3rd - regions
 % Return dimensions for equilibrium_constants: 1st - states, 2nd - channels, 3rd - regions
@@ -15,6 +15,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
     M_conc_per_m3
     dE_j
     region_names
+    require_convergence
     optional.K_dependent_threshold = false
     optional.separate_concentrations = false
     optional.alpha0 = 0
@@ -35,13 +36,13 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
       state_concs_per_m3 = initial_concentrations_per_m3((i - 1) * size(states, 1) + 1 : i * size(states, 1));
       block_initial_concentrations_per_m3 = cat(1, state_concs_per_m3, reactant_concs_per_m3);
       [krecs_m6_per_s{i}, eval_times_s{i}] = propagate_concentrations(o3_molecule, states, block_initial_concentrations_per_m3, ...
-        equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names(i), ...
+        equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names(i), require_convergence(i), ...
         separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors(i));
     end
   else
     [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, states, initial_concentrations_per_m3, equilibrium_constants_m3, ...
-      decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, separate_concentrations=optional.separate_concentrations, ...
-      alpha0=optional.alpha0, region_factors=optional.region_factors);
+      decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, require_convergence, ...
+      separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors);
     krecs_m6_per_s = mat2cell(krecs_m6_per_s, ones(size(krecs_m6_per_s, 1), 1));
     eval_times_s = mat2cell(repmat(eval_times_s, [size(krecs_m6_per_s, 1), 1]), ones(size(krecs_m6_per_s, 1), 1));
   end

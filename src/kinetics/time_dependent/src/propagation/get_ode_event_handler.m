@@ -1,4 +1,5 @@
-function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_per_m3, equilibrium_constants_total_m3, channel_ind, region_probs, optional)
+function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_per_m3, equilibrium_constants_total_m3, channel_ind, region_probs, ...
+  require_convergence, optional)
 % Returns a function that decides when propagation should stop
   arguments
     eval_step_s
@@ -7,6 +8,7 @@ function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_
     equilibrium_constants_total_m3
     channel_ind
     region_probs
+    require_convergence
     optional.separate_concentrations = false
     optional.time_factor = 1.99
     optional.convergence = 0.01
@@ -32,7 +34,7 @@ function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_
 
       comparison_ind = find(time_s / optional.time_factor < eval_times_s, 1) - 1;
       if all(krecs_m6_per_s(:, end) == 0) || ~isempty(comparison_ind) && ...
-          max(abs(krecs_m6_per_s(:, end) ./ krecs_m6_per_s(:, comparison_ind) - 1)) < optional.convergence
+          max(abs(krecs_m6_per_s(require_convergence, end) ./ krecs_m6_per_s(require_convergence, comparison_ind) - 1)) < optional.convergence
         converged_steps = converged_steps + 1;
         if converged_steps >= optional.converged_steps
           value = 0;

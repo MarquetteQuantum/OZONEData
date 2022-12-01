@@ -1,5 +1,5 @@
 function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, ...
-  temp_k, M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, optional)
+  temp_k, M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, require_convergence, optional)
   arguments
     ref_pressure_per_m3
     base_time_s
@@ -15,6 +15,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     dE_j
     sigma0_tran_m2
     region_names
+    require_convergence
     optional.K_dependent_threshold = false
     optional.separate_concentrations = false
     optional.alpha0 = 0
@@ -63,8 +64,8 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
 
     tic
     [next_krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, ...
-      M_per_m3, dE_j, region_names, K_dependent_threshold=optional.K_dependent_threshold, separate_concentrations=optional.separate_concentrations, ...
-      alpha0=optional.alpha0, region_factors=optional.region_factors);
+      M_per_m3, dE_j, region_names, require_convergence, K_dependent_threshold=optional.K_dependent_threshold, ...
+      separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors);
     execution_time = toc;
 
     propagation_time_s = eval_times_s{1}(end);

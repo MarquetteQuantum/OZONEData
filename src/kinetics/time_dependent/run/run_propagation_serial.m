@@ -18,6 +18,7 @@ function run_propagation_serial()
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
   sigma0_tran_m2 = 2000 * m_per_a0^2;
   region_names = ["sym", "asym"];
+  require_convergence = [true, false];
   
   K_dependent_threshold = false;
   separate_concentrations = false;
@@ -44,7 +45,7 @@ function run_propagation_serial()
   
   tic
   [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, M_per_m3, ...
-    dE_j, region_names, K_dependent_threshold=K_dependent_threshold, separate_concentrations=separate_concentrations, alpha0=alpha0, ...
+    dE_j, region_names, require_convergence, K_dependent_threshold=K_dependent_threshold, separate_concentrations=separate_concentrations, alpha0=alpha0, ...
     region_factors=region_factors);
   toc
 
