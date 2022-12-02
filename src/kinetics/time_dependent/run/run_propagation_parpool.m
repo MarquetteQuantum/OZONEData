@@ -27,10 +27,11 @@ function run_propagation_parpool()
 
   closed_channel = "";
   localization_threshold = 1e-3;
+  gamma_mult = 1;
 
   parpool('local', 128);
   propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, temp_k, ...
     M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, require_convergence, K_dependent_threshold=K_dependent_threshold, ...
     separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors, closed_channel=closed_channel, ...
-    localization_threshold=localization_threshold);
+    localization_threshold=localization_threshold, gamma_mult=gamma_mult);
 end

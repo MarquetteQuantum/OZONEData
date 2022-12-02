@@ -8,6 +8,7 @@ function [states, ref_energy_j] = process_states(barriers_prefix, o3_molecule, s
     gamma_range
     optional.closed_channel = ""
     optional.localization_threshold = 0
+    optional.gamma_mult = 1
   end
 
   states = assign_extra_properties(o3_molecule, states);
@@ -21,6 +22,9 @@ function [states, ref_energy_j] = process_states(barriers_prefix, o3_molecule, s
     states{:, "gamma_total"} = sum(states{:, ["gamma_a", "gamma_b"]}, 2);
   end
 
+  states{:, ["gamma_a", "gamma_b"]} = states{:, ["gamma_a", "gamma_b"]} * optional.gamma_mult;
+  states{:, "gamma_total"} = sum(states{:, ["gamma_a", "gamma_b"]}, 2);
+  
   states{states{:, "gamma_total"} < gamma_range(1), ["gamma_a", "gamma_b", "gamma_total"]} = 0;
   states(states{:, "gamma_total"} > gamma_range(2), :) = [];
 
