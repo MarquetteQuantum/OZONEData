@@ -33,7 +33,7 @@ function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_
       krecs_m6_per_s(:, end + 1) = next_krecs_m6_per_s;
 
       comparison_ind = find(time_s / optional.time_factor < eval_times_s, 1) - 1;
-      if all(krecs_m6_per_s(:, end) == 0) || ~isempty(comparison_ind) && ...
+      if all(krecs_m6_per_s(require_convergence, end) == 0) || ~isempty(comparison_ind) && ...
           max(abs(krecs_m6_per_s(require_convergence, end) ./ krecs_m6_per_s(require_convergence, comparison_ind) - 1)) < optional.convergence
         converged_steps = converged_steps + 1;
         if converged_steps >= optional.converged_steps
