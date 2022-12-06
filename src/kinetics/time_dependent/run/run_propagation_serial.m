@@ -3,11 +3,11 @@ function run_propagation_serial()
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
   ch1_concs_per_m3 = [6.44e18, 6.44e20];
-  base_time_s = linspace(0, 1000e-9, 501);
+  base_time_s = linspace(0, 1000e-9, 1001);
   
-  o3_molecule = '686';
-  J = 24;
-  K = 2;
+  o3_molecule = '666';
+  J = 52;
+  K = 0;
   vib_sym_well = 0;
   energy_range_j = [-3000, 300] * j_per_cm;
   gamma_range_j = [1, inf] * j_per_cm;
@@ -16,17 +16,18 @@ function run_propagation_serial()
   M_per_m3 = 6.44e24;
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
-  sigma0_tran_m2 = 2000 * m_per_a0^2;
-  region_names = ["sym", "asym"];
-  require_convergence = [true, false];
+  sigma0_tran_m2 = 1350 * m_per_a0^2;
+  region_names = ["cov"];
+  require_convergence = [true];
   
   K_dependent_threshold = false;
   separate_concentrations = false;
   alpha0 = 0;
-  region_factors = [1, 2];
+  region_factors = [1];
 
   closed_channel = "";
   localization_threshold = 1e-3;
+  gamma_mult = 10;
   
   resonances_prefix = [fullfile('data', 'resonances'), filesep];
   resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
@@ -36,7 +37,7 @@ function run_propagation_serial()
   states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
   states = states(data_key);
   states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=closed_channel, ...
-    localization_threshold=localization_threshold);
+    localization_threshold=localization_threshold, gamma_mult=gamma_mult);
 
   initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, K_dependent_threshold=K_dependent_threshold, ...
     separate_concentrations=separate_concentrations, region_names=region_names);

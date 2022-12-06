@@ -10,7 +10,7 @@ function event_handler = get_ode_event_handler(eval_step_s, derivatives_func, M_
     region_probs
     require_convergence
     optional.separate_concentrations = false
-    optional.time_factor = 1.99
+    optional.time_factor = 1.25
     optional.convergence = 0.01
     optional.converged_steps = 2
   end

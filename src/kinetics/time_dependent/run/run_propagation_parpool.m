@@ -3,7 +3,7 @@ function run_propagation_parpool()
   m_per_a0 = get_m_per_a0();
   ref_pressure_per_m3 = 6.44e24;
   ch1_concs_per_m3 = [6.44e18, 6.44e20];
-  base_time_s = linspace(0, 1000e-9, 501);
+  base_time_s = linspace(0, 1000e-9, 1001);
   
   o3_molecules = {'686'};
   Js = [0:32, 36:4:64];
