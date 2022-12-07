@@ -27,7 +27,7 @@ function run_propagation_serial()
 
   closed_channel = "";
   localization_threshold = 1e-3;
-  gamma_mult = 10;
+  gamma_mult = 1;
   
   resonances_prefix = [fullfile('data', 'resonances'), filesep];
   resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
