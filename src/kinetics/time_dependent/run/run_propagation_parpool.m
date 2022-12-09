@@ -10,7 +10,8 @@ function run_propagation_parpool()
   Ks = 0:20;
   vib_syms_well = 0:1;
   energy_range_j = [-3000, 300] * j_per_cm;
-  gamma_range_j = [1, inf] * j_per_cm;
+  gamma_mult = 1;
+  gamma_range_j = [1, inf] * gamma_mult * j_per_cm;
 
   temp_k = 298;
   M_concs_per_m3 = 6.44 * logspace(23, 28, 6);
@@ -27,7 +28,6 @@ function run_propagation_parpool()
 
   closed_channel = "";
   localization_threshold = 1e-3;
-  gamma_mult = 1;
 
   parallel_pool(128);
   propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, temp_k, ...

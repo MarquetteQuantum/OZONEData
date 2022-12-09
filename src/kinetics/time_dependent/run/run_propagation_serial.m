@@ -10,7 +10,8 @@ function run_propagation_serial()
   K = 0;
   vib_sym_well = 0;
   energy_range_j = [-3000, 300] * j_per_cm;
-  gamma_range_j = [1, inf] * j_per_cm;
+  gamma_mult = 1;
+  gamma_range_j = [1, inf] * gamma_mult * j_per_cm;
 
   temp_k = 298;
   M_per_m3 = 6.44e24;
@@ -27,7 +28,6 @@ function run_propagation_serial()
 
   closed_channel = "";
   localization_threshold = 1e-3;
-  gamma_mult = 1;
   
   resonances_prefix = [fullfile('data', 'resonances'), filesep];
   resonances_format = iif(is_monoisotopic(o3_molecule), "666", "686");
