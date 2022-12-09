@@ -10,7 +10,7 @@ function energy_j = estimate_lowest_barrier_energy(barriers_prefix, o3_molecule,
   if isempty(interpolant)
     known_Js = [0:2:32, 36:4:64];
     known_Ks = 0:2:20;
-    if o3_molecule == "666" || o3_molecule == "686"
+    if o3_molecule == "666" || o3_molecule == "676" || o3_molecule == "686"
       lowest_pathway = "S";
     elseif o3_molecule == "868"
       lowest_pathway = "B";
