@@ -52,7 +52,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     end
 
     data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
-    resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
+    resonances_format = iif(is_monoisotopic(o3_molecule), "666", "686");
     states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
     states = states(data_key);
     states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=optional.closed_channel, ...

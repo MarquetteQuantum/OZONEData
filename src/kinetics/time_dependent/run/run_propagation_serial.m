@@ -30,7 +30,7 @@ function run_propagation_serial()
   gamma_mult = 1;
   
   resonances_prefix = [fullfile('data', 'resonances'), filesep];
-  resonances_format = iif(o3_molecule == "868", "686", o3_molecule);
+  resonances_format = iif(is_monoisotopic(o3_molecule), "666", "686");
   barriers_prefix = [fullfile('data', 'barriers'), filesep];
 
   data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
