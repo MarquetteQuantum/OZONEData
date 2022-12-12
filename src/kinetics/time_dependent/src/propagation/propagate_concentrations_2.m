@@ -26,7 +26,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
     K_dependent_threshold=optional.K_dependent_threshold);
   decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, K_dependent_threshold=optional.K_dependent_threshold);
 
-  if optional.separate_concentrations && optional.alpha0 == 0
+  if optional.separate_concentrations && length(optional.alpha0) == 1 && optional.alpha0 == 0
     % Propagate each block separately, assuming constant reactants concentration
     num_reactants = mod(length(initial_concentrations_per_m3), size(states, 1));
     reactant_concs_per_m3 = initial_concentrations_per_m3(end - num_reactants + 1 : end);
