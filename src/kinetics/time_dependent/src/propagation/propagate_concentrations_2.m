@@ -20,10 +20,11 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
     optional.separate_concentrations = false
     optional.alpha0 = 0
     optional.region_factors = ones(size(region_names))
+    optional.equilibrium_mult = 1
   end
 
-  equilibrium_constants_m3 = calculate_formation_decay_equilibrium_2(o3_molecule, states, temp_k, ...
-    K_dependent_threshold=optional.K_dependent_threshold);
+  equilibrium_constants_m3 = calculate_formation_decay_equilibrium_2(o3_molecule, states, temp_k, K_dependent_threshold=optional.K_dependent_threshold);
+  equilibrium_constants_m3 = equilibrium_constants_m3 * optional.equilibrium_mult;
   decay_coeffs_per_s = get_decay_coeffs_2(o3_molecule, states, K_dependent_threshold=optional.K_dependent_threshold);
 
   if optional.separate_concentrations && length(optional.alpha0) == 1 && optional.alpha0 == 0
