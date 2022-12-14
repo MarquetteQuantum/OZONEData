@@ -17,6 +17,8 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     optional.separate_concentrations = false
     optional.alpha0 = 0
     optional.region_factors = ones(size(region_names))
+    optional.formation_mult = 1
+    optional.decay_mult = 1
   end
 
   if ~optional.separate_concentrations
@@ -32,7 +34,8 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
   transition_matrix_m3_per_s = transition_matrix_m3_per_s * k0_tran_m3_per_s * M_conc_per_m3;
   transition_matrix_m3_per_s = (transition_matrix_m3_per_s - diag(sum(transition_matrix_m3_per_s, 2)))';
 
-  ode_func = @(t, y) do3dt(transition_matrix_m3_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y);
+  ode_func = @(t, y) do3dt(transition_matrix_m3_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y, formation_mult=optional.formation_mult, ...
+    decay_mult=optional.decay_mult);
   channel_ind = get_lower_channel_ind(o3_molecule);
   eval_step_s = time_s(2) - time_s(1);
   equilibrium_constants_total_m3 = sum(equilibrium_constants_m3, 1);

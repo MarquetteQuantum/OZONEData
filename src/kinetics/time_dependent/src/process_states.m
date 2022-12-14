@@ -7,7 +7,6 @@ function [states, ref_energy_j] = process_states(barriers_prefix, o3_molecule, s
     energy_range_j
     gamma_range_j
     optional.gamma_threshold_j = 500 * get_j_per_cm()
-    optional.gamma_mult = 1
     optional.closed_channel = ""
     optional.localization_threshold = 0
   end
@@ -19,7 +18,6 @@ function [states, ref_energy_j] = process_states(barriers_prefix, o3_molecule, s
   states{states{:, "energy"} < threshold_energy_j, ["gamma_a", "gamma_b", "gamma_total"]} = 0;
 
   states(states{:, "gamma_total"} > optional.gamma_threshold_j, :) = [];
-  states{:, ["gamma_a", "gamma_b", "gamma_total"]} = states{:, ["gamma_a", "gamma_b", "gamma_total"]} * optional.gamma_mult;
   states{states{:, "gamma_total"} < gamma_range_j(1), ["gamma_a", "gamma_b", "gamma_total"]} = 0;
   states(states{:, "gamma_total"} > gamma_range_j(2), :) = [];
 
