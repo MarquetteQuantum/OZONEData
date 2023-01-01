@@ -25,14 +25,16 @@ function run_propagation_parpool()
   alpha0 = 0;
   region_factors = [1, 2, 2, 1];
 
+  formation_mult = 1;
+  decay_mult = 1;
+
   closed_channel = "";
   localization_threshold = 1e-3;
-  formation_mult = 1;
-  decay_mult = 1/5;
+  gamma_use_reference = false;
 
   parallel_pool(128);
   propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, temp_k, ...
     M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, require_convergence, K_dependent_threshold=K_dependent_threshold, ...
-    separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors, closed_channel=closed_channel, ...
-    localization_threshold=localization_threshold, formation_mult=formation_mult, decay_mult=decay_mult);
+    separate_concentrations=separate_concentrations, alpha0=alpha0, region_factors=region_factors, formation_mult=formation_mult, decay_mult=decay_mult, ...
+    closed_channel=closed_channel, localization_threshold=localization_threshold, gamma_use_reference=gamma_use_reference);
 end

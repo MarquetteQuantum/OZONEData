@@ -9,13 +9,16 @@ function [states, ref_energy_j] = process_states(barriers_prefix, o3_molecule, s
     optional.gamma_threshold_j = 500 * get_j_per_cm()
     optional.closed_channel = ""
     optional.localization_threshold = 0
+    optional.gamma_use_reference = false
   end
 
   states = assign_extra_properties(o3_molecule, states);
   [ref_energy_j, threshold_energy_j] = get_higher_barrier_threshold(barriers_prefix, o3_molecule, states{1, "J"}, states{1, "K"}, states{1, "vib_sym_well"});
   states(states{:, "energy"} < ref_energy_j + energy_range_j(1), :) = [];
   states(states{:, "energy"} > ref_energy_j + energy_range_j(2), :) = [];
-  states{states{:, "energy"} < threshold_energy_j, ["gamma_a", "gamma_b", "gamma_total"]} = 0;
+
+  gamma_zero_threshold_j = iif(optional.gamma_use_reference, ref_energy_j, threshold_energy_j);
+  states{states{:, "energy"} < gamma_zero_threshold_j, ["gamma_a", "gamma_b", "gamma_total"]} = 0;
 
   states(states{:, "gamma_total"} > optional.gamma_threshold_j, :) = [];
   states{states{:, "gamma_total"} < gamma_range_j(1), ["gamma_a", "gamma_b", "gamma_total"]} = 0;

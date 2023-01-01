@@ -20,10 +20,11 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     optional.separate_concentrations = false
     optional.alpha0 = 0
     optional.region_factors = ones(size(region_names))
-    optional.closed_channel = ""
-    optional.localization_threshold = 1e-3
     optional.formation_mult = 1
     optional.decay_mult = 1
+    optional.closed_channel = ""
+    optional.localization_threshold = 1e-3
+    optional.gamma_use_reference = false
   end
 
   save("env.mat");
@@ -57,7 +58,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
     states = states(data_key);
     states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=optional.closed_channel, ...
-      localization_threshold=optional.localization_threshold);
+      localization_threshold=optional.localization_threshold, gamma_use_reference=optional.gamma_use_reference);
 
     initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
       K_dependent_threshold=optional.K_dependent_threshold, separate_concentrations=optional.separate_concentrations, region_names=region_names);
