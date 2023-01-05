@@ -6,17 +6,17 @@ function run_propagation_serial()
   base_time_s = linspace(0, 1000e-9, 1001);
   
   o3_molecule = '666';
-  J = 24;
-  K = 2;
+  J = 37;
+  K = 4;
   vib_sym_well = 0;
   energy_range_j = [-3000, 300] * j_per_cm;
-  gamma_range_j = [1, 2.5] * j_per_cm;
+  gamma_range_j = [5, 10] * j_per_cm;
 
   temp_k = 298;
   M_per_m3 = 6.44e28;
   dE_j = [-43.13, nan] * j_per_cm;
   dE_j(2) = get_dE_up(dE_j(1), temp_k);
-  sigma0_tran_m2 = 1700 * m_per_a0^2;
+  sigma0_tran_m2 = 2300 * m_per_a0^2;
   region_names = ["cov", "vdw"];
 %   region_names = ["sym", "asym", "vdw_a", "vdw_b"];
   require_convergence = [true, false];
@@ -27,8 +27,9 @@ function run_propagation_serial()
   alpha0 = 0;
   region_factors = [1, 1];
 %   region_factors = [1, 2, 2, 1];
-  formation_mult = 5;
-  decay_mult = 5;
+
+  formation_mult = 1;
+  decay_mult = 1;
 
   closed_channel = "";
   localization_threshold = 1e-3;
