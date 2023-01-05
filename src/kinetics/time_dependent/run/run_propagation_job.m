@@ -30,6 +30,7 @@ function run_propagation_job()
   closed_channel = "";
   localization_threshold = 1e-3;
   gamma_use_reference = false;
+  new_db = false;
 
 %   remote_folder = "/mmfs1/home/3830gaydayi/kinetic_runs/666/total/vdw/formation_mult_1/decay_mult_1/gamma_min_1/gamma_max_2.5/sigma_1700/dE_43/test";
   remote_folder = "/mmfs1/home/3830gaydayi/kinetic_runs/test";
@@ -47,7 +48,8 @@ function run_propagation_job()
   args = {ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, temp_k, M_concs_per_m3, ...
     dE_j, sigma0_tran_m2, region_names, require_convergence, "K_dependent_threshold", K_dependent_threshold, ...
     "separate_concentrations", separate_concentrations, "alpha0", alpha0, "region_factors", region_factors, "formation_mult", formation_mult, ...
-    "decay_mult", decay_mult "closed_channel", closed_channel, "localization_threshold", localization_threshold, "gamma_use_reference", gamma_use_reference};
+    "decay_mult", decay_mult "closed_channel", closed_channel, "localization_threshold", localization_threshold, "gamma_use_reference", gamma_use_reference, ...
+    "new_db", new_db};
 %   job = c.batch(@propagation_parallel_job, 0, args, CurrentFolder=remote_folder, AutoAddClientPath=false, Pool=num_workers);
   job = c.batch(@test_parallel_job, 0, {}, CurrentFolder=remote_folder, AutoAddClientPath=false, Pool=num_workers);
   job.Name = job_name;

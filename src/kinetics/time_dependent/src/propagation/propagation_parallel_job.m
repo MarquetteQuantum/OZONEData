@@ -25,6 +25,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     optional.closed_channel = ""
     optional.localization_threshold = 1e-3
     optional.gamma_use_reference = false
+    optional.new_db = false
   end
 
   save("env.mat");
@@ -49,7 +50,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(execution_times), remaining_inds(ind_ind));
     [M_per_m3, o3_molecule, K, J, vib_sym_well] = deal(M_concs_per_m3(M_ind), o3_molecules{o3_ind}, Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
     
-    if K > J || J > 32 && mod(K, 2) == 1
+    if K > J || ~optional.new_db && J > 32 && mod(K, 2) == 1
       continue
     end
 

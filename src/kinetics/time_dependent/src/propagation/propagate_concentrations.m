@@ -22,19 +22,19 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
   end
 
   if ~optional.separate_concentrations
-    transition_matrix_m3_per_s = calculate_transition_matrix_unitless(states, dE_j, region_names, region_factors=optional.region_factors);
+    transition_matrix_per_s = calculate_transition_matrix_unitless(states, dE_j, region_names, region_factors=optional.region_factors);
   else
-    transition_matrix_m3_per_s = calculate_transition_matrix_unitless_separate(states, dE_j, region_names, optional.alpha0, ...
+    transition_matrix_per_s = calculate_transition_matrix_unitless_separate(states, dE_j, region_names, optional.alpha0, ...
       region_factors=optional.region_factors);
     decay_coeffs_per_s = repmat(decay_coeffs_per_s, [length(region_names), 1]);
     equilibrium_constants_m3 = column_function(@(col) reshape(states{:, region_names} .* col, [], 1), equilibrium_constants_m3);
   end
 
   k0_tran_m3_per_s = get_k0_2(o3_molecule, temp_k, sigma0_m2);
-  transition_matrix_m3_per_s = transition_matrix_m3_per_s * k0_tran_m3_per_s * M_conc_per_m3;
-  transition_matrix_m3_per_s = (transition_matrix_m3_per_s - diag(sum(transition_matrix_m3_per_s, 2)))';
+  transition_matrix_per_s = transition_matrix_per_s * k0_tran_m3_per_s * M_conc_per_m3;
+  transition_matrix_per_s = (transition_matrix_per_s - diag(sum(transition_matrix_per_s, 2)))';
 
-  ode_func = @(t, y) do3dt(transition_matrix_m3_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y, formation_mult=optional.formation_mult, ...
+  ode_func = @(t, y) do3dt(transition_matrix_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y, formation_mult=optional.formation_mult, ...
     decay_mult=optional.decay_mult);
   channel_ind = get_lower_channel_ind(o3_molecule);
   eval_step_s = time_s(2) - time_s(1);
