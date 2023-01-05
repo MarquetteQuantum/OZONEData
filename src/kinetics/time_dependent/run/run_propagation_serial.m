@@ -6,8 +6,8 @@ function run_propagation_serial()
   base_time_s = linspace(0, 1000e-9, 1001);
   
   o3_molecule = '666';
-  J = 37;
-  K = 4;
+  J = 24;
+  K = 2;
   vib_sym_well = 0;
   energy_range_j = [-3000, 300] * j_per_cm;
   gamma_range_j = [5, 10] * j_per_cm;
