@@ -1,19 +1,19 @@
-function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecules, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, ...
-  temp_k, M_concs_per_m3, dE_j, sigma0_tran_m2, region_names, require_convergence, optional)
+function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecule, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, ...
+  temps_k, M_concs_per_m3, dE_j, sigma_tran_m2, region_names, require_convergence, optional)
   arguments
     ref_pressure_per_m3
     base_time_s
     ch1_concs_per_m3
-    o3_molecules
+    o3_molecule
     Js
     Ks
     vib_syms_well
     energy_range_j
     gamma_range_j
-    temp_k
+    temps_k
     M_concs_per_m3
     dE_j
-    sigma0_tran_m2
+    sigma_tran_m2
     region_names
     require_convergence
     optional.K_dependent_threshold = false
@@ -33,9 +33,9 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     load("krecs.mat");
     remaining_inds = find(execution_times == 0);
   else
-    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well), length(region_names));
-    propagation_times_s = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
-    execution_times = zeros(length(M_concs_per_m3), length(o3_molecules), length(Ks), length(Js), length(vib_syms_well));
+    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well), length(region_names));
+    propagation_times_s = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well));
+    execution_times = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well));
     remaining_inds = 1:numel(execution_times);
   end
   
@@ -47,8 +47,8 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
   data_queue.afterEach(@data_handler);
   tic
   parfor ind_ind = 1:length(remaining_inds)
-    [M_ind, o3_ind, K_ind, J_ind, sym_ind] = ind2sub(size(execution_times), remaining_inds(ind_ind));
-    [M_per_m3, o3_molecule, K, J, vib_sym_well] = deal(M_concs_per_m3(M_ind), o3_molecules{o3_ind}, Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
+    [M_ind, temp_ind, K_ind, J_ind, sym_ind] = ind2sub(size(execution_times), remaining_inds(ind_ind));
+    [M_per_m3, temp_k, K, J, vib_sym_well] = deal(M_concs_per_m3(M_ind), temps_k(temp_ind), Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
     
     if K > J || ~optional.new_db && J > 32 && mod(K, 2) == 1
       continue
@@ -61,13 +61,13 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=optional.closed_channel, ...
       localization_threshold=optional.localization_threshold, gamma_use_reference=optional.gamma_use_reference);
 
-    initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temp_k, ...
+    initial_concentrations_per_m3 = get_initial_concentrations(ch1_concs_per_m3, o3_molecule, states, temps_k, ...
       K_dependent_threshold=optional.K_dependent_threshold, separate_concentrations=optional.separate_concentrations, region_names=region_names);
     pressure_ratio = M_per_m3 / ref_pressure_per_m3;
     time_s = base_time_s / pressure_ratio;
 
     tic
-    [next_krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma0_tran_m2, temp_k, ...
+    [next_krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma_tran_m2, temp_k, ...
       M_per_m3, dE_j, region_names, require_convergence, K_dependent_threshold=optional.K_dependent_threshold, ...
       separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors, ...
       formation_mult=optional.formation_mult, decay_mult=optional.decay_mult);
@@ -75,7 +75,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
 
     propagation_time_s = eval_times_s{1}(end);
     last_krecs_m6_per_s = cellfun(@(x) x(end), next_krecs_m6_per_s);
-    send(data_queue, [M_ind, o3_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, last_krecs_m6_per_s']);
+    send(data_queue, [M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, last_krecs_m6_per_s']);
   end
   toc
 
