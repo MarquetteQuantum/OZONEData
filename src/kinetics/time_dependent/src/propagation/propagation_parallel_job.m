@@ -1,5 +1,5 @@
 function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_per_m3, o3_molecule, Js, Ks, vib_syms_well, energy_range_j, gamma_range_j, ...
-  temps_k, M_concs_per_m3, dE_j, sigma_tran_m2, region_names, require_convergence, optional)
+  temps_k, M_concs_per_m3, dE_down_j, sigma_tran_m2, region_names, require_convergence, optional)
   arguments
     ref_pressure_per_m3
     base_time_s
@@ -12,7 +12,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     gamma_range_j
     temps_k
     M_concs_per_m3
-    dE_j
+    dE_down_j
     sigma_tran_m2
     region_names
     require_convergence
@@ -49,6 +49,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
   parfor ind_ind = 1:length(remaining_inds)
     [M_ind, temp_ind, K_ind, J_ind, sym_ind] = ind2sub(size(execution_times), remaining_inds(ind_ind));
     [M_per_m3, temp_k, K, J, vib_sym_well] = deal(M_concs_per_m3(M_ind), temps_k(temp_ind), Ks(K_ind), Js(J_ind), vib_syms_well(sym_ind));
+    dE_up_j = get_dE_up(dE_down_j, temp_k);
     
     if K > J || ~optional.new_db && J > 32 && mod(K, 2) == 1
       continue
@@ -68,7 +69,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
 
     tic
     [next_krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma_tran_m2, temp_k, ...
-      M_per_m3, dE_j, region_names, require_convergence, K_dependent_threshold=optional.K_dependent_threshold, ...
+      M_per_m3, [dE_down_j, dE_up_j], region_names, require_convergence, K_dependent_threshold=optional.K_dependent_threshold, ...
       separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors, ...
       formation_mult=optional.formation_mult, decay_mult=optional.decay_mult);
     execution_time = toc;
