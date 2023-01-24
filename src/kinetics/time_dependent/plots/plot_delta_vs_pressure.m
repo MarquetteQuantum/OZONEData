@@ -41,7 +41,7 @@ function plot_delta_vs_pressure()
   my_plot(pressure_bar, 2/3*total_686, figure_id=figure_ids(1), color=color_ind, line_style="-");
 %   my_plot(pressure_bar, 2*krecs_dtau{2}(:, sym_ind), figure_id=1, color=1, line_style="-");
 %   my_plot(pressure_bar, krecs_dtau{2}(:, asym_ind), figure_id=1, color=2, line_style="-");
-  plot_krec_vs_pressure_experimental_666();
+  plot_krec_vs_pressure_experimental_666_2();
   xticklabels_every_order(1);
 
   my_plot(pressure_bar, deltas, "Pressure, bar", "\delta, %", figure_id=figure_ids(2), color=color_ind, xscale="log", xlim=[5e-3, 2e3], ylim=[-1, 16]);
