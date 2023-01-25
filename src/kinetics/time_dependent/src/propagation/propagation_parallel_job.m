@@ -42,6 +42,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
   home_path = getenv("HOME");
   resonances_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'resonances'), filesep];
   barriers_prefix = [fullfile(home_path, 'ozone_kinetics', 'data', 'barriers'), filesep];
+  resonances_format = iif(is_monoisotopic(o3_molecule), "666", "686");
 
   data_queue = parallel.pool.DataQueue;
   data_queue.afterEach(@data_handler);
@@ -56,7 +57,6 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     end
 
     data_key = get_key_vib_well(o3_molecule, J, K, vib_sym_well);
-    resonances_format = iif(is_monoisotopic(o3_molecule), "666", "686");
     states = read_resonances(fullfile(resonances_prefix, data_key), resonances_format, delim=resonances_prefix);
     states = states(data_key);
     states = process_states(barriers_prefix, o3_molecule, states, energy_range_j, gamma_range_j, closed_channel=optional.closed_channel, ...
