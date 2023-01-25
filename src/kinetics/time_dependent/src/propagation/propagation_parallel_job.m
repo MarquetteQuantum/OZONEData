@@ -25,7 +25,8 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     optional.closed_channel = ""
     optional.localization_threshold = 1e-3
     optional.gamma_use_reference = false
-    optional.new_db = false
+    optional.new_db = true
+    optional.save_time = true
   end
 
   save("env.mat");
@@ -33,7 +34,11 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     load("krecs.mat");
     remaining_inds = find(execution_times == 0);
   else
-    krecs_m6_per_s = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well), length(region_names));
+    if ~optional.save_time
+      krecs_m6_per_s = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well), length(region_names));
+    else
+      krecs_m6_per_s = cell(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well), length(region_names));
+    end
     propagation_times_s = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well));
     execution_times = zeros(length(M_concs_per_m3), length(temps_k), length(Ks), length(Js), length(vib_syms_well));
     remaining_inds = 1:numel(execution_times);
@@ -75,15 +80,18 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     execution_time = toc;
 
     propagation_time_s = eval_times_s{1}(end);
-    last_krecs_m6_per_s = cellfun(@(x) x(end), next_krecs_m6_per_s);
-    send(data_queue, [M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, last_krecs_m6_per_s']);
+    if ~optional.save_time
+      next_krecs_m6_per_s = cellfun(@(x) x(end), next_krecs_m6_per_s);
+    end
+    
+    send(data_queue, {M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s});
   end
   toc
 
   function data_handler(data)
-    propagation_times_s(data(1), data(2), data(3), data(4), data(5)) = data(6);
-    execution_times(data(1), data(2), data(3), data(4), data(5)) = data(7);
-    krecs_m6_per_s(data(1), data(2), data(3), data(4), data(5), :) = data(8:end);
+    propagation_times_s(data{1}, data{2}, data{3}, data{4}, data{5}) = data{6};
+    execution_times(data{1}, data{2}, data{3}, data{4}, data{5}) = data{7};
+    krecs_m6_per_s(data{1}, data{2}, data{3}, data{4}, data{5}, :) = data{8};
     save("krecs.mat", "propagation_times_s", "execution_times", "krecs_m6_per_s");
   end
 end
