@@ -82,16 +82,23 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     propagation_time_s = eval_times_s{1}(end);
     if ~optional.save_time
       next_krecs_m6_per_s = cellfun(@(x) x(end), next_krecs_m6_per_s);
+      send(data_queue, [M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s']);
+    else
+      send(data_queue, {M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s});
     end
-    
-    send(data_queue, {M_ind, temp_ind, K_ind, J_ind, sym_ind, propagation_time_s, execution_time, next_krecs_m6_per_s});
   end
   toc
 
   function data_handler(data)
-    propagation_times_s(data{1}, data{2}, data{3}, data{4}, data{5}) = data{6};
-    execution_times(data{1}, data{2}, data{3}, data{4}, data{5}) = data{7};
-    krecs_m6_per_s(data{1}, data{2}, data{3}, data{4}, data{5}, :) = data{8};
+    if ~optional.save_time
+      propagation_times_s(data(1), data(2), data(3), data(4), data(5)) = data(6);
+      execution_times(data(1), data(2), data(3), data(4), data(5)) = data(7);
+      krecs_m6_per_s(data(1), data(2), data(3), data(4), data(5), :) = data(8:end);
+    else
+      propagation_times_s(data{1}, data{2}, data{3}, data{4}, data{5}) = data{6};
+      execution_times(data{1}, data{2}, data{3}, data{4}, data{5}) = data{7};
+      krecs_m6_per_s(data{1}, data{2}, data{3}, data{4}, data{5}, :) = data{8};
+    end
     save("krecs.mat", "propagation_times_s", "execution_times", "krecs_m6_per_s");
   end
 end
