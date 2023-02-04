@@ -29,19 +29,19 @@ function run_propagation_job(optional)
   end
 
   if o3_molecule == "666"
-%     region_names = ["cov", "vdw"];
-%     require_convergence = [true, false];
-%     region_factors = [1, 1];
-    region_names = ["cov"];
-    require_convergence = [true];
-    region_factors = [1];
+    region_names = ["cov", "vdw"];
+    require_convergence = [true, false];
+    region_factors = [1, 1];
+%     region_names = ["cov"];
+%     require_convergence = [true];
+%     region_factors = [1];
   else
-%     region_names = ["sym", "asym", "vdw_a", "vdw_b"];
-%     require_convergence = [true, true, false, false];
-%     region_factors = [1, 2, 2, 1];
-    region_names = ["sym", "asym"];
-    require_convergence = [true, true];
-    region_factors = [1, 2];
+    region_names = ["sym", "asym", "vdw_a", "vdw_b"];
+    require_convergence = [true, true, false, false];
+    region_factors = [1, 2, 2, 1];
+%     region_names = ["sym", "asym"];
+%     require_convergence = [true, true];
+%     region_factors = [1, 2];
   end
 
   K_dependent_threshold = false;
@@ -55,6 +55,8 @@ function run_propagation_job(optional)
   gamma_use_reference = false;
   new_db = true;
   save_time = true;
+
+  converged_steps = 2;
 
   remote_folder = optional.path;
   delim = "kinetic_runs/";
@@ -71,7 +73,7 @@ function run_propagation_job(optional)
     dE_down_j, sigma_tran_m2, region_names, require_convergence, "K_dependent_threshold", K_dependent_threshold, ...
     "separate_concentrations", separate_concentrations, "alpha0", alpha0, "region_factors", region_factors, "formation_mult", formation_mult, ...
     "decay_mult", decay_mult "closed_channel", closed_channel, "localization_threshold", localization_threshold, "gamma_use_reference", gamma_use_reference, ...
-    "new_db", new_db, "save_time", save_time};
+    "new_db", new_db, "save_time", save_time, "converged_steps", converged_steps};
   job = c.batch(@propagation_parallel_job, 0, args, CurrentFolder=remote_folder, AutoAddClientPath=false, Pool=num_workers);
   job.Name = job_name;
 end

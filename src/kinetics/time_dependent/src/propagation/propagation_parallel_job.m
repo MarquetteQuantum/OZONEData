@@ -27,6 +27,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     optional.gamma_use_reference = false
     optional.new_db = true
     optional.save_time = true
+    optional.converged_steps = 2
   end
 
   save("env.mat");
@@ -76,7 +77,7 @@ function propagation_parallel_job(ref_pressure_per_m3, base_time_s, ch1_concs_pe
     [next_krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule, states, initial_concentrations_per_m3, time_s, sigma_tran_m2, temp_k, ...
       M_per_m3, [dE_down_j, dE_up_j], region_names, require_convergence, K_dependent_threshold=optional.K_dependent_threshold, ...
       separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors, ...
-      formation_mult=optional.formation_mult, decay_mult=optional.decay_mult);
+      formation_mult=optional.formation_mult, decay_mult=optional.decay_mult, converged_steps=optional.converged_steps);
     execution_time = toc;
 
     propagation_time_s = eval_times_s{1}(end);

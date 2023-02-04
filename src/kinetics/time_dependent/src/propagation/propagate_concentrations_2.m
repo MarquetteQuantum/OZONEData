@@ -22,6 +22,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
     optional.region_factors = ones(size(region_names))
     optional.formation_mult = 1
     optional.decay_mult = 1
+    optional.converged_steps = 2
   end
 
   equilibrium_constants_m3 = calculate_formation_decay_equilibrium_2(o3_molecule, states, temp_k, K_dependent_threshold=optional.K_dependent_threshold);
@@ -39,13 +40,13 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations_2(o3_molecule
       [krecs_m6_per_s{i}, eval_times_s{i}] = propagate_concentrations(o3_molecule, states, block_initial_concentrations_per_m3, ...
         equilibrium_constants_m3, decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names(i), require_convergence(i), ...
         separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors(i), ...
-        formation_mult=optional.formation_mult, decay_mult=optional.decay_mult);
+        formation_mult=optional.formation_mult, decay_mult=optional.decay_mult, converged_steps=optional.converged_steps);
     end
   else
     [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, states, initial_concentrations_per_m3, equilibrium_constants_m3, ...
       decay_coeffs_per_s, time_s, sigma0_m2, temp_k, M_conc_per_m3, dE_j, region_names, require_convergence, ...
       separate_concentrations=optional.separate_concentrations, alpha0=optional.alpha0, region_factors=optional.region_factors, ...
-      formation_mult=optional.formation_mult, decay_mult=optional.decay_mult);
+      formation_mult=optional.formation_mult, decay_mult=optional.decay_mult, converged_steps=optional.converged_steps);
     krecs_m6_per_s = mat2cell(krecs_m6_per_s, ones(size(krecs_m6_per_s, 1), 1));
     eval_times_s = mat2cell(repmat(eval_times_s, [size(krecs_m6_per_s, 1), 1]), ones(size(krecs_m6_per_s, 1), 1));
   end

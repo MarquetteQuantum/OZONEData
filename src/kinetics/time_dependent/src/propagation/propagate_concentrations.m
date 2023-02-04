@@ -19,6 +19,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     optional.region_factors = ones(size(region_names))
     optional.formation_mult = 1
     optional.decay_mult = 1
+    optional.converged_steps = 2
   end
 
   if ~optional.separate_concentrations
@@ -37,10 +38,11 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
   ode_func = @(t, y) do3dt(transition_matrix_per_s, decay_coeffs_per_s, equilibrium_constants_m3, y, formation_mult=optional.formation_mult, ...
     decay_mult=optional.decay_mult);
   channel_ind = get_lower_channel_ind(o3_molecule);
+
   eval_step_s = time_s(2) - time_s(1);
   equilibrium_constants_total_m3 = sum(equilibrium_constants_m3, 1);
   event_func = get_ode_event_handler(eval_step_s, ode_func, M_conc_per_m3, equilibrium_constants_total_m3, channel_ind, states{:, region_names}, ...
-    require_convergence, separate_concentrations=optional.separate_concentrations);
+    require_convergence, separate_concentrations=optional.separate_concentrations, converged_steps=optional.converged_steps);
 
   options = odeset(RelTol=1e-10, AbsTol=1e-10, Events=event_func);
   [eval_times_s, concentrations_per_m3, ~, ~, ~] = ode45(ode_func, time_s, initial_concentrations_per_m3, options);
