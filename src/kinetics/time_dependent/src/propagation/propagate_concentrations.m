@@ -20,6 +20,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     optional.formation_mult = 1
     optional.decay_mult = 1
     optional.converged_steps = 2
+    optional.eval_step_s = nan
   end
 
   if ~optional.separate_concentrations
@@ -39,7 +40,7 @@ function [krecs_m6_per_s, eval_times_s] = propagate_concentrations(o3_molecule, 
     decay_mult=optional.decay_mult);
   channel_ind = get_lower_channel_ind(o3_molecule);
 
-  eval_step_s = time_s(2) - time_s(1);
+  eval_step_s = iif(isnan(optional.eval_step_s), time_s(2) - time_s(1), optional.eval_step_s);
   equilibrium_constants_total_m3 = sum(equilibrium_constants_m3, 1);
   event_func = get_ode_event_handler(eval_step_s, ode_func, M_conc_per_m3, equilibrium_constants_total_m3, channel_ind, states{:, region_names}, ...
     require_convergence, separate_concentrations=optional.separate_concentrations, converged_steps=optional.converged_steps);
