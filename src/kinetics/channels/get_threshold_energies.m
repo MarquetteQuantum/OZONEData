@@ -15,9 +15,8 @@ function [threshold_energies_j, threshold_js] = get_threshold_energies(o3_molecu
     for sym_ind = 1:length(K_vib_syms_well)
       K_vib_sym_well = K_vib_syms_well(sym_ind);
       for ch = 1:size(channels, 1)
-        [threshold_energies_j(K_ind, sym_ind, ch), threshold_js(K_ind, sym_ind, ch)] = ...
-          get_threshold_energy_K_ch(o3_molecule, channels(ch, 2), K, K_vib_sym_well, ...
-          K_dependent_threshold=optional.K_dependent_threshold);
+        [threshold_energies_j(K_ind, sym_ind, ch), threshold_js(K_ind, sym_ind, ch)] = get_threshold_energy_K_ch(o3_molecule, channels(ch, 2), K, ...
+          K_vib_sym_well, K_dependent_threshold=optional.K_dependent_threshold);
       end
     end
   end
