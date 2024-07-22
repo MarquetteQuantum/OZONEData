@@ -1,4 +1,4 @@
-# ozone_kinetics
+# Ozone_Database
 This database includes:
 1) "Normal" ozone without substitution of rare isotopes 16O16O16O;
 2) Symmetric 16O18O16O and asymmetric 16O16O18O ozone molecules with single substitution of more abundant heavy isotope 18O;
